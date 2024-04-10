@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ScoreHunter.CommandLine": {
+      "commandName": "Project",
+      "commandLineArgs": "guitar_3x2.xmk"
+    }
+  }
+}

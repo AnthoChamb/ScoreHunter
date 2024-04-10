@@ -1,4 +1,6 @@
-﻿namespace ScoreHunter.Core.Events
+﻿using ScoreHunter.Core.Interfaces;
+
+namespace ScoreHunter.Core.Events
 {
     public abstract class Event
     {
@@ -8,5 +10,7 @@
         }
 
         public double Start { get; }
+
+        public abstract void Accept(IEventVisitor visitor);
     }
 }

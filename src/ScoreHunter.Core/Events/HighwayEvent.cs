@@ -1,4 +1,6 @@
-﻿namespace ScoreHunter.Core.Events
+﻿using ScoreHunter.Core.Interfaces;
+
+namespace ScoreHunter.Core.Events
 {
     public class HighwayEvent : Event
     {
@@ -8,5 +10,7 @@
         }
 
         public double End { get; }
+
+        public override void Accept(IEventVisitor visitor) => visitor.Visit(this);
     }
 }

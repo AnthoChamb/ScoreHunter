@@ -7,6 +7,10 @@ namespace ScoreHunter.Core
     {
         private readonly NoteFlags _flags;
 
+        public Note(double start, double end, Frets frets) : this(start, end, frets, NoteFlags.None)
+        {
+        }
+
         public Note(double start, double end, Frets frets, NoteFlags flags)
         {
             Start = start;

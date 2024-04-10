@@ -1,4 +1,6 @@
-﻿namespace ScoreHunter.Core.Events
+﻿using ScoreHunter.Core.Interfaces;
+
+namespace ScoreHunter.Core.Events
 {
     public class SustainEvent : Event
     {
@@ -8,5 +10,7 @@
         }
 
         public Frets Frets { get; }
+
+        public override void Accept(IEventVisitor visitor) => visitor.Visit(this);
     }
 }
