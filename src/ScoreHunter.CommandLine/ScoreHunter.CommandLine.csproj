@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FsgXmk.Kaitai" Version="0.2.1" />
+    <PackageReference Include="FsgXmk.Kaitai" Version="0.2.2" />
   </ItemGroup>
 
   <ItemGroup>

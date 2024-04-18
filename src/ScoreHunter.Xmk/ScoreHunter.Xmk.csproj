@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FsgXmk.Core" Version="0.2.1" />
+    <PackageReference Include="FsgXmk.Core" Version="0.2.2" />
   </ItemGroup>
 
   <ItemGroup>

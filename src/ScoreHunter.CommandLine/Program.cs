@@ -36,8 +36,9 @@ namespace ScoreHunter.CommandLine
             var difficulty = Difficulty.Expert;
 
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
-            var xmkStreamReaderFactory = new KaitaiXmkStreamReaderFactory();
-            var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(xmkStreamReaderFactory);
+            var headerStreamReaderFactory = new KaitaiXmkHeaderStreamReaderFactory();
+            var eventStreamReaderFactory = new KaitaiXmkEventStreamReaderFactory();
+            var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory, eventStreamReaderFactory);
 
             if (args.Length > 0)
             {

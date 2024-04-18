@@ -8,16 +8,18 @@ namespace ScoreHunter.Xmk.Factories
 {
     public class XmkTrackStreamReaderFactory : ITrackStreamReaderFactory
     {
-        private readonly IXmkStreamReaderFactory _factory;
+        private readonly IXmkHeaderStreamReaderFactory _headerStreamReaderFactory;
+        private readonly IXmkEventStreamReaderFactory _eventStreamReaderFactory;
 
-        public XmkTrackStreamReaderFactory(IXmkStreamReaderFactory factory)
+        public XmkTrackStreamReaderFactory(IXmkHeaderStreamReaderFactory headerStreamReaderFactory, IXmkEventStreamReaderFactory eventStreamReaderFactory)
         {
-            _factory = factory;
+            _headerStreamReaderFactory = headerStreamReaderFactory;
+            _eventStreamReaderFactory = eventStreamReaderFactory;
         }
 
         public ITrackReader Create(Stream stream, bool leaveOpen)
         {
-            return new XmkTrackReader(_factory.Create(stream, leaveOpen), leaveOpen);
+            return new XmkTrackStreamReader(stream, _headerStreamReaderFactory, _eventStreamReaderFactory, leaveOpen);
         }
     }
 }
