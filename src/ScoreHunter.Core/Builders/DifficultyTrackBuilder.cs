@@ -38,6 +38,6 @@ namespace ScoreHunter.Core.Builders
             return this;
         }
 
-        public DifficultyTrack Build() => new DifficultyTrack(_first.GetChordNode(), _heroPowerPhrases);
+        public DifficultyTrack Build() => new DifficultyTrack(_first?.GetChordNode(), _heroPowerPhrases);
     }
 }
