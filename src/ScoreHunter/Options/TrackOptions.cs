@@ -2,7 +2,19 @@
 {
     public class TrackOptions
     {
-        public double SustainLength { get; set; } = 0.023;
-        public int MaxHeroPowerCount { get; set; } = -1;
+        public TrackOptions()
+        {
+            SustainLength = 0.023;
+            MaxHeroPowerCount = -1;
+        }
+
+        public TrackOptions(double sustainLength, int maxHeroPowerCount)
+        {
+            SustainLength = sustainLength;
+            MaxHeroPowerCount = maxHeroPowerCount;
+        }
+
+        public double SustainLength { get; set; }
+        public int MaxHeroPowerCount { get; set; }
     }
 }

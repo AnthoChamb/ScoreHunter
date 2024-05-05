@@ -2,9 +2,25 @@
 {
     public class ScoringOptions
     {
-        public double PointsPerNote { get; set; } = 50;
-        public double PointsPerSustain { get; set; } = 1;
-        public int MaxMultiplier { get; set; } = 4;
-        public int StreakPerMultiplier { get; set; } = 10;
+        public ScoringOptions()
+        {
+            PointsPerNote = 50;
+            PointsPerSustain = 1;
+            MaxMultiplier = 4;
+            StreakPerMultiplier = 10;
+        }
+
+        public ScoringOptions(double pointsPerNote, double pointsPerSustain, int maxMultiplier, int streakPerMultiplier)
+        {
+            PointsPerNote = pointsPerNote;
+            PointsPerSustain = pointsPerSustain;
+            MaxMultiplier = maxMultiplier;
+            StreakPerMultiplier = streakPerMultiplier;
+        }
+
+        public double PointsPerNote { get; set; }
+        public double PointsPerSustain { get; set; }
+        public int MaxMultiplier { get; set; }
+        public int StreakPerMultiplier { get; set; }
     }
 }
