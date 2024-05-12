@@ -3,6 +3,6 @@
     public enum HeroPowerOption
     {
         ScoreChaser,
-        Double
+        DoubleMultiplier
     }
 }

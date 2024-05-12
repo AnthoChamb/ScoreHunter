@@ -3,7 +3,7 @@ using ScoreHunter.Core.Interfaces;
 
 namespace ScoreHunter.HeroPowers
 {
-    public class DoubleHeroPower : IHeroPower
+    public class DoubleMultiplierHeroPower : IHeroPower
     {
         public double Duration => 7;
         public int Multiplier(int multiplier) => multiplier * 2;

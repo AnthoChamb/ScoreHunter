@@ -12,7 +12,7 @@ namespace ScoreHunter.CommandLine.Factories
             return option switch
             {
                 HeroPowerOption.ScoreChaser => new ScoreChaserHeroPower(),
-                HeroPowerOption.Double => new DoubleHeroPower(),
+                HeroPowerOption.DoubleMultiplier => new DoubleMultiplierHeroPower(),
                 _ => throw new ArgumentException(null, nameof(option)),
             };
         }
