@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ScoreHunter.Core\ScoreHunter.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HeroPowers.LocalizedDoubleMultiplierHeroPower.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HeroPowers.LocalizedScoreChaserHeroPower.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>HeroPowers.LocalizedDoubleMultiplierHeroPower.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HeroPowers.LocalizedScoreChaserHeroPower.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.de.resx">
+      <DependentUpon>HeroPowers.LocalizedDoubleMultiplierHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.es.resx">
+      <DependentUpon>HeroPowers.LocalizedDoubleMultiplierHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.fr.resx">
+      <DependentUpon>HeroPowers.LocalizedDoubleMultiplierHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedDoubleMultiplierHeroPower.it.resx">
+      <DependentUpon>HeroPowers.LocalizedDoubleMultiplierHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.de.resx">
+      <DependentUpon>HeroPowers.LocalizedScoreChaserHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.es.resx">
+      <DependentUpon>HeroPowers.LocalizedScoreChaserHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.fr.resx">
+      <DependentUpon>HeroPowers.LocalizedScoreChaserHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\HeroPowers.LocalizedScoreChaserHeroPower.it.resx">
+      <DependentUpon>HeroPowers.LocalizedScoreChaserHeroPower.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

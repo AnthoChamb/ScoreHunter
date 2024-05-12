@@ -1,4 +1,7 @@
 ﻿using FsgXmk.Kaitai.Factories;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ScoreHunter.CommandLine.Binding;
 using ScoreHunter.CommandLine.Enums;
 using ScoreHunter.CommandLine.Factories;
@@ -73,7 +76,9 @@ namespace ScoreHunter.CommandLine
             rootCommand.AddOption(sustainLengthOption);
             rootCommand.AddOption(maxHeroPowerCountOption);
 
-            var heroPowerFactory = new HeroPowerFactory();
+            var localizationOptions = new LocalizationOptions { ResourcesPath = "Resources" };
+            var stringLocalizerFactory = new ResourceManagerStringLocalizerFactory(new OptionsWrapper<LocalizationOptions>(localizationOptions), new LoggerFactory());
+            var heroPowerFactory = new HeroPowerFactory(stringLocalizerFactory);
 
             var optimiserOptionsBinder = new OptimiserOptionsBinder(heroPowersOption, maxMissOption, heroPowerFactory);
             var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
@@ -109,7 +114,7 @@ namespace ScoreHunter.CommandLine
 
             foreach (var activation in optimalPath.Activations)
             {
-                Console.WriteLine("Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
+                Console.WriteLine("Hero Power: " + activation.HeroPower + ", Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
             }
         }
     }
