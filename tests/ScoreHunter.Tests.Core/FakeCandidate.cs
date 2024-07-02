@@ -14,7 +14,7 @@ namespace ScoreHunter.Tests.Core
         public int Miss { get; set; }
 
         public ICollection<IActivation> Activations { get; set; } = new List<IActivation>();
-        IEnumerable<IActivation> ICandidate.Activations => Activations;
+        IEnumerable<IActivation> IPath.Activations => Activations;
 
         public ICandidate Advance(Event @event) => this;
         public ICandidate Highway(HighwayEvent highway) => this;

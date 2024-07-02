@@ -19,7 +19,7 @@ namespace ScoreHunter
             _options = options;
         }
 
-        public ICandidate GetMaxScore()
+        public IPath GetMaxScore()
         {
             var maxScore = _candidates.FirstOrDefault();
             foreach (var candidate in _candidates)

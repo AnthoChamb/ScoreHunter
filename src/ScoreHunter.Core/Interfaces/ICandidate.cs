@@ -1,18 +1,13 @@
 ﻿using ScoreHunter.Core.Events;
-using System.Collections.Generic;
 
 namespace ScoreHunter.Core.Interfaces
 {
-    public interface ICandidate
+    public interface ICandidate : IPath
     {
-        int Score { get; }
         int Streak { get; }
         int Multiplier { get; }
         int MaxMultiplier { get; }
         int StreakPerMultiplier { get; }
-        int Miss { get; }
-
-        IEnumerable<IActivation> Activations { get; }
 
         ICandidate Advance(Event @event);
         ICandidate HitNote(NoteEvent note);

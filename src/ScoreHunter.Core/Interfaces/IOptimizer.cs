@@ -4,6 +4,6 @@ namespace ScoreHunter.Core.Interfaces
 {
     public interface IOptimizer
     {
-        ICandidate Optimize(ITrack track, Difficulty difficulty);
+        IPath Optimize(ITrack track, Difficulty difficulty);
     }
 }

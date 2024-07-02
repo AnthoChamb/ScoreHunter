@@ -19,7 +19,7 @@ namespace ScoreHunter
             _trackEventCollectionFactory = new TrackEventCollectionFactory(trackOptions);
         }
 
-        public ICandidate Optimize(ITrack track, Difficulty difficulty)
+        public IPath Optimize(ITrack track, Difficulty difficulty)
         {
             var eventCollection = _trackEventCollectionFactory.Create(track, difficulty);
             var scoring = new Candidate(_optimiserOptions.HeroPowers.FirstOrDefault(), _scoringOptions);
