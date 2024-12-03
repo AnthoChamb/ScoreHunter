@@ -24,6 +24,7 @@ namespace ScoreHunter.Factories
             {
                 var currentChordNode = difficultyTrack.GetFirstChordNode();
                 ActiveSustains activeSustains = null;
+                var hasActiveSustains = false;
                 var heroPowerCount = 0;
 
                 using (var heroPowerPhrasesEnumerator = difficultyTrack.HeroPowerPhrases.GetEnumerator())
@@ -70,13 +71,14 @@ namespace ScoreHunter.Factories
                         if (activeSustains != null && currentChord.Start >= activeSustains.End)
                         {
                             activeSustains = null;
+                            hasActiveSustains = false;
                         }
 
                         foreach (var sustainNote in currentChord.Notes.Where(note => note.IsSustain))
                         {
                             if (activeSustains == null)
                             {
-                                activeSustains = new ActiveSustains(sustainNote);
+                                activeSustains = new ActiveSustains(sustainNote, _options.SustainLength);
                             }
                             else
                             {
@@ -86,13 +88,20 @@ namespace ScoreHunter.Factories
 
                         if (activeSustains != null)
                         {
-                            while (activeSustains.MoveNext(_options.SustainLength)
-                                && (currentChordNode.Next == null || activeSustains.Position < currentChordNode.Next.Value.Start))
+                            if (!hasActiveSustains)
+                            {
+                                hasActiveSustains = activeSustains.MoveNext();
+                            }
+
+                            while (hasActiveSustains &&
+                                (currentChordNode.Next == null ||
+                                activeSustains.Position < currentChordNode.Next.Value.Start))
                             {
                                 var sustainEvent = new SustainEvent(activeSustains.Position, activeSustains.Frets);
                                 var sustainEventNode = new EventNode(sustainEvent);
                                 previous.Next = sustainEventNode;
                                 previous = sustainEventNode;
+                                hasActiveSustains = activeSustains.MoveNext();
                             }
                         }
 
