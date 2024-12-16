@@ -1,4 +1,4 @@
-﻿using FsgXmk.Kaitai.Factories;
+﻿using FsgXmk.Factories;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -95,8 +95,8 @@ namespace ScoreHunter.CommandLine
         public static async void ExecuteAsync(FileInfo file, Difficulty difficulty, OptimiserOptions optimiserOptions, ScoringOptions scoringOptions, TrackOptions trackOptions)
         {
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
-            var headerStreamReaderFactory = new KaitaiXmkHeaderStreamReaderFactory();
-            var eventStreamReaderFactory = new KaitaiXmkEventStreamReaderFactory();
+            var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());
+            var eventStreamReaderFactory = new XmkEventStreamReaderFactory(new XmkEventByteArrayReaderFactory());
             var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory, eventStreamReaderFactory);
 
             ITrack track;

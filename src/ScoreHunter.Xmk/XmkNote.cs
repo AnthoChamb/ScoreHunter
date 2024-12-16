@@ -1,4 +1,4 @@
-﻿using FsgXmk.Core.Enums;
+﻿using FsgXmk.Abstractions.Enums;
 using ScoreHunter.Core;
 using ScoreHunter.Core.Interfaces;
 

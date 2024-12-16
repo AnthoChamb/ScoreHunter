@@ -1,10 +1,10 @@
-﻿using FsgXmk.Core.Enums;
-using FsgXmk.Core.Interfaces;
+﻿using FsgXmk.Abstractions.Enums;
+using FsgXmk.Abstractions.Interfaces;
 using ScoreHunter.Core;
 using ScoreHunter.Core.Builders;
 using ScoreHunter.Core.Enums;
 
-using EventNote = FsgXmk.Core.Enums.Note;
+using EventNote = FsgXmk.Abstractions.Enums.Note;
 
 namespace ScoreHunter.Xmk.Builders
 {

@@ -1,4 +1,4 @@
-﻿using FsgXmk.Core.Interfaces.Factories;
+﻿using FsgXmk.Abstractions.Interfaces.Factories;
 using ScoreHunter.Core.Interfaces.Factories;
 using ScoreHunter.Core.Interfaces.IO;
 using ScoreHunter.Xmk.IO;

@@ -1,4 +1,4 @@
-﻿using FsgXmk.Kaitai.Factories;
+﻿using FsgXmk.Factories;
 using ScoreHunter.Core.Enums;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Options;
@@ -56,8 +56,8 @@ namespace ScoreHunter.PowerShell.Commands
             var trackOptions = new TrackOptions(SustainLegth, MaxHeroPowerCount);
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
 
-            var headerStreamReaderFactory = new KaitaiXmkHeaderStreamReaderFactory();
-            var eventStreamReaderFactory = new KaitaiXmkEventStreamReaderFactory();
+            var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());
+            var eventStreamReaderFactory = new XmkEventStreamReaderFactory(new XmkEventByteArrayReaderFactory());
             var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory, eventStreamReaderFactory);
 
             ITrack track;

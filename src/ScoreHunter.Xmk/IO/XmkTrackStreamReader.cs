@@ -1,6 +1,6 @@
-﻿using FsgXmk.Core;
-using FsgXmk.Core.Interfaces;
-using FsgXmk.Core.Interfaces.Factories;
+﻿using FsgXmk.Abstractions;
+using FsgXmk.Abstractions.Interfaces;
+using FsgXmk.Abstractions.Interfaces.Factories;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Core.Interfaces.IO;
 using ScoreHunter.Xmk.Builders;

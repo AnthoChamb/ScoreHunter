@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FsgXmk.Kaitai" Version="0.2.2" />
+    <PackageReference Include="FsgXmk" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />

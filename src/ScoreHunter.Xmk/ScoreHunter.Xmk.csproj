@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FsgXmk.Core" Version="0.2.2" />
+    <PackageReference Include="FsgXmk.Abstractions" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
