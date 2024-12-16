@@ -15,7 +15,7 @@ namespace ScoreHunter.HeroPowers
                    (candidate.Multiplier == candidate.MaxMultiplier &&
                    (candidate.Streak % candidate.StreakPerMultiplier) == (candidate.StreakPerMultiplier - 1));
         }
-        
+
         public bool CanActivate(ICandidate candidate, SustainEvent sustain) => false;
     }
 }

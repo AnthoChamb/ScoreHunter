@@ -1,5 +1,5 @@
-﻿using ScoreHunter.Core.Interfaces;
-using ScoreHunter.Core;
+﻿using ScoreHunter.Core;
+using ScoreHunter.Core.Interfaces;
 using System.Collections.Generic;
 
 namespace ScoreHunter
