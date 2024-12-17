@@ -126,6 +126,7 @@ namespace ScoreHunter
             {
                 _flags &= ~ScoringFlags.HeroPower;
                 _flags |= ScoringFlags.ChainHeroPower;
+                _heroPowerEnd = 0;
                 return this;
             }
 
@@ -157,7 +158,7 @@ namespace ScoreHunter
                        && _scoring._heroPower == cacheKey._scoring._heroPower
                        && _scoring._heroPowerCount == cacheKey._scoring._heroPowerCount
                        && _scoring._flags == cacheKey._scoring._flags
-                       && (!_scoring._flags.HasFlag(ScoringFlags.HeroPower) || _scoring._heroPowerEnd == cacheKey._scoring._heroPowerEnd);
+                       && _scoring._heroPowerEnd == cacheKey._scoring._heroPowerEnd;
             }
 
             public override bool Equals(object obj) => obj is ICacheKey other && Equals(other);
