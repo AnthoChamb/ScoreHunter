@@ -1,6 +1,7 @@
 ﻿using ScoreHunter.Core.Events;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Options;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace ScoreHunter
 {
     public class OptimiserEventVisitor : IEventVisitor
     {
-        private IEnumerable<ICandidate> _candidates;
+        private ICollection<ICandidate> _candidates;
         private readonly OptimiserOptions _options;
 
         public OptimiserEventVisitor(ICandidate candidate, OptimiserOptions options)
@@ -34,21 +35,21 @@ namespace ScoreHunter
 
         public void Visit(NoteEvent note)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>();
+            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
             Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, note, cache));
             _candidates = cache.Values;
         }
 
         public void Visit(SustainEvent sustain)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>();
+            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
             Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, sustain, cache));
             _candidates = cache.Values;
         }
 
         public void Visit(HighwayEvent highway)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>();
+            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
             Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, highway, cache));
             _candidates = cache.Values;
         }
