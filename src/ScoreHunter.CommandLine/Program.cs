@@ -84,7 +84,7 @@ namespace ScoreHunter.CommandLine
             var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
             var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, maxHeroPowerCountOption);
 
-            rootCommand.SetHandler(ExecuteAsync, fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
+            rootCommand.SetHandler(Handle, fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
 
             await rootCommand.InvokeAsync(args);
 
@@ -92,7 +92,7 @@ namespace ScoreHunter.CommandLine
             Console.WriteLine("Elapsed time: " + stopWatch.Elapsed);
         }
 
-        public static async void ExecuteAsync(FileInfo file, Difficulty difficulty, OptimiserOptions optimiserOptions, ScoringOptions scoringOptions, TrackOptions trackOptions)
+        public static void Handle(FileInfo file, Difficulty difficulty, OptimiserOptions optimiserOptions, ScoringOptions scoringOptions, TrackOptions trackOptions)
         {
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
             var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());
@@ -104,7 +104,7 @@ namespace ScoreHunter.CommandLine
             using (var stream = file.OpenRead())
             using (var reader = trackStreamReaderFactory.Create(stream, true))
             {
-                track = await reader.ReadAsync();
+                track = reader.Read();
             }
 
             var optimalPath = optimiser.Optimize(track, difficulty);
