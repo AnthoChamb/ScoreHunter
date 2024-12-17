@@ -2,7 +2,6 @@
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Factories;
 using ScoreHunter.Options;
-using System.Linq;
 
 namespace ScoreHunter
 {
@@ -22,7 +21,7 @@ namespace ScoreHunter
         public IPath Optimize(ITrack track, Difficulty difficulty)
         {
             var eventCollection = _trackEventCollectionFactory.Create(track, difficulty);
-            var scoring = new Candidate(_optimiserOptions.HeroPowers.FirstOrDefault(), _scoringOptions);
+            var scoring = new Candidate(_scoringOptions);
             var visitor = new OptimiserEventVisitor(scoring, _optimiserOptions);
 
             foreach (var @event in eventCollection.Events)

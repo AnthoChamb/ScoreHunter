@@ -127,6 +127,12 @@ namespace ScoreHunter
                 _flags &= ~ScoringFlags.HeroPower;
                 _flags |= ScoringFlags.ChainHeroPower;
                 _heroPowerEnd = 0;
+
+                if (_heroPowerCount == 0)
+                {
+                    _heroPower = null;
+                }
+
                 return this;
             }
 
@@ -185,9 +191,8 @@ namespace ScoreHunter
 
         private readonly IImmutableList<IActivation> _activations = ImmutableList.Create<IActivation>();
 
-        public Candidate(IHeroPower heroPower, ScoringOptions options)
+        public Candidate(ScoringOptions options)
         {
-            _heroPower = heroPower;
             _options = options;
         }
 
