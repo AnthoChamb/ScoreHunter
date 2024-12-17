@@ -1,17 +1,14 @@
 ﻿using ScoreHunter.Core.Events;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Options;
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScoreHunter
 {
     public class OptimiserEventVisitor : IEventVisitor
     {
-        private ICollection<ICandidate> _candidates;
+        private IReadOnlyCollection<ICandidate> _candidates;
         private readonly OptimiserOptions _options;
 
         public OptimiserEventVisitor(ICandidate candidate, OptimiserOptions options)
@@ -35,26 +32,35 @@ namespace ScoreHunter
 
         public void Visit(NoteEvent note)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
-            Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, note, cache));
+            var cache = new Dictionary<ICacheKey, ICandidate>(_candidates.Count);
+            foreach (var candidate in _candidates)
+            {
+                Optimize(candidate, note, cache);
+            }
             _candidates = cache.Values;
         }
 
         public void Visit(SustainEvent sustain)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
-            Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, sustain, cache));
+            var cache = new Dictionary<ICacheKey, ICandidate>(_candidates.Count);
+            foreach (var candidate in _candidates)
+            {
+                Optimize(candidate, sustain, cache);
+            }
             _candidates = cache.Values;
         }
 
         public void Visit(HighwayEvent highway)
         {
-            var cache = new ConcurrentDictionary<ICacheKey, ICandidate>(Environment.ProcessorCount, _candidates.Count);
-            Parallel.ForEach(_candidates, (candidate) => Optimize(candidate, highway, cache));
+            var cache = new Dictionary<ICacheKey, ICandidate>(_candidates.Count);
+            foreach (var candidate in _candidates)
+            {
+                Optimize(candidate, highway, cache);
+            }
             _candidates = cache.Values;
         }
 
-        private void Optimize(ICandidate candidate, NoteEvent note, ConcurrentDictionary<ICacheKey, ICandidate> cache)
+        private void Optimize(ICandidate candidate, NoteEvent note, Dictionary<ICacheKey, ICandidate> cache)
         {
             candidate = candidate.Advance(note);
 
@@ -86,7 +92,7 @@ namespace ScoreHunter
             Cache(candidate, cache);
         }
 
-        private void Optimize(ICandidate candidate, SustainEvent sustain, ConcurrentDictionary<ICacheKey, ICandidate> cache)
+        private void Optimize(ICandidate candidate, SustainEvent sustain, Dictionary<ICacheKey, ICandidate> cache)
         {
             candidate = candidate.Advance(sustain);
 
@@ -100,23 +106,26 @@ namespace ScoreHunter
             Cache(candidate, cache);
         }
 
-        private void Optimize(ICandidate candidate, HighwayEvent highway, ConcurrentDictionary<ICacheKey, ICandidate> cache)
+        private void Optimize(ICandidate candidate, HighwayEvent highway, Dictionary<ICacheKey, ICandidate> cache)
         {
             candidate = candidate.Advance(highway).Highway(highway);
             Cache(candidate, cache);
         }
 
-        private void Cache(ICandidate candidate, ConcurrentDictionary<ICacheKey, ICandidate> cache)
+        private void Cache(ICandidate candidate, Dictionary<ICacheKey, ICandidate> cache)
         {
             var cacheKey = candidate.GetCacheKey();
-            cache.AddOrUpdate(cacheKey, candidate, (key, value) =>
+            if (cache.TryGetValue(cacheKey, out var value))
             {
                 if (candidate.Score > value.Score)
                 {
-                    return candidate;
+                    cache[cacheKey] = candidate;
                 }
-                return value;
-            });
+            }
+            else
+            {
+                cache.Add(cacheKey, candidate);
+            }
         }
     }
 }
