@@ -1,4 +1,5 @@
-﻿using FsgXmk.Abstractions.Enums;
+﻿using FsgXmk.Abstractions;
+using FsgXmk.Abstractions.Enums;
 using FsgXmk.Abstractions.Interfaces;
 using ScoreHunter.Core;
 using ScoreHunter.Core.Builders;
@@ -14,7 +15,19 @@ namespace ScoreHunter.Xmk.Builders
 
         public XmkTrackBuilder()
         {
-            _builder = new TrackBuilder();
+            _builder = new TrackBuilder().WithTicksPerQuarterNote(XmkConstants.TicksPerQuarterNote);
+        }
+
+        public XmkTrackBuilder AddXmkTempo(IXmkTempo xmkTempo)
+        {
+            _builder.AddTempo(CreateTempo(xmkTempo));
+            return this;
+        }
+
+        public XmkTrackBuilder AddXmkTimeSignature(IXmkTimeSignature xmkTimeSignature)
+        {
+            _builder.AddTimeSignature(CreateTimeSignature(xmkTimeSignature));
+            return this;
         }
 
         public XmkTrackBuilder AddXmkEvent(IXmkEvent xmkEvent)
@@ -206,6 +219,8 @@ namespace ScoreHunter.Xmk.Builders
             }
         }
 
+        private Tempo CreateTempo(IXmkTempo xmkTempo) => new Tempo((int)xmkTempo.Ticks, (int)xmkTempo.Tempo);
+        private TimeSignature CreateTimeSignature(IXmkTimeSignature xmkTimeSignature) => new TimeSignature((int)xmkTimeSignature.Ticks, (int)xmkTimeSignature.Numerator, (int)xmkTimeSignature.Denominator);
         private Phrase CreatePhrase(IXmkEvent xmkEvent) => new Phrase(xmkEvent.Start, xmkEvent.End);
         private XmkNote CreateNote(IXmkEvent xmkEvent, Frets frets) => new XmkNote(xmkEvent.Start, xmkEvent.End, frets, xmkEvent.Type);
 

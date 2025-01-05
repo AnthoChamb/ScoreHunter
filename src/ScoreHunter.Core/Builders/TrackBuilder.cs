@@ -6,13 +6,36 @@ namespace ScoreHunter.Core.Builders
 {
     public class TrackBuilder
     {
+        private int _ticksPerQuarterNote;
+        private readonly ICollection<ITempo> _tempos;
+        private readonly ICollection<ITimeSignature> _timeSignatures;
         private readonly IDictionary<Difficulty, DifficultyTrackBuilder> _difficulties;
         private readonly ICollection<IPhrase> _highwayPhrases;
 
         public TrackBuilder()
         {
+            _tempos = new List<ITempo>();
+            _timeSignatures = new List<ITimeSignature>();
             _difficulties = new Dictionary<Difficulty, DifficultyTrackBuilder>();
             _highwayPhrases = new List<IPhrase>();
+        }
+
+        public TrackBuilder WithTicksPerQuarterNote(int ticksPerQuarterNote)
+        {
+            _ticksPerQuarterNote = ticksPerQuarterNote;
+            return this;
+        }
+
+        public TrackBuilder AddTempo(ITempo tempo)
+        {
+            _tempos.Add(tempo);
+            return this;
+        }
+
+        public TrackBuilder AddTimeSignature(ITimeSignature timeSignature)
+        {
+            _timeSignatures.Add(timeSignature);
+            return this;
         }
 
         public TrackBuilder AddNote(Difficulty difficulty, INote note)
@@ -62,7 +85,7 @@ namespace ScoreHunter.Core.Builders
                 difficulties.Add(difficulty.Key, difficulty.Value.Build());
             }
 
-            return new Track(difficulties, _highwayPhrases);
+            return new Track(_ticksPerQuarterNote, _tempos, _timeSignatures, difficulties, _highwayPhrases);
         }
     }
 }

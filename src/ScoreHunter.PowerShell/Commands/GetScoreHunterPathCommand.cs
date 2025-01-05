@@ -57,8 +57,13 @@ namespace ScoreHunter.PowerShell.Commands
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
 
             var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());
+            var tempoStreamReaderFactory = new XmkTempoStreamReaderFactory(new XmkTempoByteArrayReaderFactory());
+            var timeSignatureReaderFactory = new XmkTimeSignatureStreamReaderFactory(new XmkTimeSignatureByteArrayReaderFactory());
             var eventStreamReaderFactory = new XmkEventStreamReaderFactory(new XmkEventByteArrayReaderFactory());
-            var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory, eventStreamReaderFactory);
+            var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory,
+                                                                           tempoStreamReaderFactory,
+                                                                           timeSignatureReaderFactory,
+                                                                           eventStreamReaderFactory);
 
             ITrack track;
 
