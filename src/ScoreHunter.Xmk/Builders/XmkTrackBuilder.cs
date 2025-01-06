@@ -219,7 +219,7 @@ namespace ScoreHunter.Xmk.Builders
             }
         }
 
-        private Tempo CreateTempo(IXmkTempo xmkTempo) => new Tempo((int)xmkTempo.Ticks, (int)xmkTempo.Tempo);
+        private Tempo CreateTempo(IXmkTempo xmkTempo) => new Tempo((int)xmkTempo.Ticks, xmkTempo.Start, (int)xmkTempo.Tempo);
         private TimeSignature CreateTimeSignature(IXmkTimeSignature xmkTimeSignature) => new TimeSignature((int)xmkTimeSignature.Ticks, (int)xmkTimeSignature.Numerator, (int)xmkTimeSignature.Denominator);
         private Phrase CreatePhrase(IXmkEvent xmkEvent) => new Phrase(xmkEvent.Start, xmkEvent.End);
         private XmkNote CreateNote(IXmkEvent xmkEvent, Frets frets) => new XmkNote(xmkEvent.Start, xmkEvent.End, frets, xmkEvent.Type);
