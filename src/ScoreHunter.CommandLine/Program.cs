@@ -77,16 +77,19 @@ namespace ScoreHunter.CommandLine
             rootCommand.AddOption(maxHeroPowerCountOption);
 
             var localizationOptions = new LocalizationOptions { ResourcesPath = "Resources" };
-            var stringLocalizerFactory = new ResourceManagerStringLocalizerFactory(new OptionsWrapper<LocalizationOptions>(localizationOptions), new LoggerFactory());
-            var heroPowerFactory = new HeroPowerFactory(stringLocalizerFactory);
+            using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
+            {
+                var stringLocalizerFactory = new ResourceManagerStringLocalizerFactory(new OptionsWrapper<LocalizationOptions>(localizationOptions), loggerFactory);
+                var heroPowerFactory = new HeroPowerFactory(stringLocalizerFactory);
 
-            var optimiserOptionsBinder = new OptimiserOptionsBinder(heroPowersOption, maxMissOption, heroPowerFactory);
-            var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
-            var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, maxHeroPowerCountOption);
+                var optimiserOptionsBinder = new OptimiserOptionsBinder(heroPowersOption, maxMissOption, heroPowerFactory);
+                var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
+                var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, maxHeroPowerCountOption);
 
-            rootCommand.SetHandler(Handle, fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
+                rootCommand.SetHandler(Handle, fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
 
-            await rootCommand.InvokeAsync(args);
+                await rootCommand.InvokeAsync(args);
+            }
 
             stopWatch.Stop();
             Console.WriteLine("Elapsed time: " + stopWatch.Elapsed);
