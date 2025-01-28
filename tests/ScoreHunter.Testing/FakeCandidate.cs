@@ -2,7 +2,7 @@
 using ScoreHunter.Core.Interfaces;
 using System.Collections.Generic;
 
-namespace ScoreHunter.Tests.Core
+namespace ScoreHunter.Testing
 {
     public class FakeCandidate : ICandidate
     {

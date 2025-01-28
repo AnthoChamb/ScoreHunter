@@ -1,7 +1,7 @@
 ﻿using ScoreHunter.Core;
 using ScoreHunter.Core.Enums;
 using ScoreHunter.Core.Events;
-using ScoreHunter.Tests.Core;
+using ScoreHunter.Testing;
 using Xunit;
 
 namespace ScoreHunter.Tests.Events

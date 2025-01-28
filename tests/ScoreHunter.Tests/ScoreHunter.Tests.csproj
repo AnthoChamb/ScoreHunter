@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ScoreHunter\ScoreHunter.csproj" />
-    <ProjectReference Include="..\ScoreHunter.Tests.Core\ScoreHunter.Tests.Core.csproj" />
+    <ProjectReference Include="..\ScoreHunter.Testing\ScoreHunter.Testing.csproj" />
   </ItemGroup>
 
 </Project>

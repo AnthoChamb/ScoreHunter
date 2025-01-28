@@ -1,7 +1,7 @@
 ﻿using ScoreHunter.Core;
 using ScoreHunter.Core.Events;
 using ScoreHunter.HeroPowers;
-using ScoreHunter.Tests.Core;
+using ScoreHunter.Testing;
 using Xunit;
 
 namespace ScoreHunter.Tests.HeroPowers
