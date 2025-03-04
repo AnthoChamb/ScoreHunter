@@ -71,7 +71,7 @@ namespace ScoreHunter.Tests.HeroPowers
             // Arrange
             var doubleMultiplier = new DoubleMultiplierHeroPower();
             var candidate = new FakeCandidate();
-            var sustain = new SustainEvent(0, Frets.White1);
+            var sustain = new SustainEvent(0, 1);
 
             // Act
             var canActivate = doubleMultiplier.CanActivate(candidate, sustain);

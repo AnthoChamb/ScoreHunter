@@ -1,30 +1,28 @@
-﻿using ScoreHunter.Core;
-using ScoreHunter.Core.Interfaces;
+﻿using ScoreHunter.Core.Interfaces;
 using System.Collections.Generic;
 
 namespace ScoreHunter
 {
     public class ActiveSustains
     {
-        private readonly LinkedList<ActiveSustain> _activeSustains;
+        private readonly Queue<ActiveSustain> _activeSustains;
         private readonly double _sustainLength;
 
         public ActiveSustains(INote note, double sustainLength)
         {
-            _activeSustains = new LinkedList<ActiveSustain>();
-            Position = note.Start;
+            _activeSustains = new Queue<ActiveSustain>(3);
             _sustainLength = sustainLength;
             AddNote(note);
         }
 
-        public Frets Frets { get; private set; }
+        public int Count { get; private set; }
         public double Position { get; private set; }
         public double End { get; private set; }
 
         public void AddNote(INote note)
         {
             var activeSustain = new ActiveSustain(note, _sustainLength);
-            _activeSustains.AddFirst(activeSustain);
+            _activeSustains.Enqueue(activeSustain);
 
             if (note.End > End)
             {
@@ -34,29 +32,27 @@ namespace ScoreHunter
 
         public bool MoveNext()
         {
-            var activeSustainNode = _activeSustains.First;
-
-            if (activeSustainNode != null)
+            if (_activeSustains.Count > 0)
             {
-                var activeSustain = activeSustainNode.Value;
-                var frets = new Frets();
+                Count = 0;
+                ActiveSustain activeSustain;
 
                 do
                 {
-                    frets = frets.Add(activeSustain.Note.Frets);
-                    _activeSustains.RemoveFirst();
+                    activeSustain = _activeSustains.Dequeue();
                     if (activeSustain.MoveNext())
                     {
-                        _activeSustains.AddLast(activeSustain);
+                        Count++;
+                        _activeSustains.Enqueue(activeSustain);
                     }
-                } while ((activeSustainNode = activeSustainNode.Next) != null &&
-                         (activeSustain = activeSustainNode.Value).Position == Position);
+                } while (_activeSustains.Count > 0 &&
+                         _activeSustains.Peek().Position == Position);
 
-                Frets = frets;
                 Position = activeSustain.Position;
+                return _activeSustains.Count > 0;
             }
 
-            return Position < End;
+            return false;
         }
     }
 }

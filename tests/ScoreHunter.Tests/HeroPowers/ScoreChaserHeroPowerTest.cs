@@ -140,7 +140,7 @@ namespace ScoreHunter.Tests.HeroPowers
             // Arrange
             var scoreChaser = new ScoreChaserHeroPower();
             var candidate = new FakeCandidate();
-            var sustain = new SustainEvent(0, Frets.White1);
+            var sustain = new SustainEvent(0, 1);
 
             // Act
             var canActivate = scoreChaser.CanActivate(candidate, sustain);

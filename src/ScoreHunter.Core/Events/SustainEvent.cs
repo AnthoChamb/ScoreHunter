@@ -4,12 +4,12 @@ namespace ScoreHunter.Core.Events
 {
     public class SustainEvent : Event
     {
-        public SustainEvent(double start, Frets frets) : base(start)
+        public SustainEvent(double start, int count) : base(start)
         {
-            Frets = frets;
+            Count = count;
         }
 
-        public Frets Frets { get; }
+        public int Count { get; }
 
         public override void Accept(IEventVisitor visitor) => visitor.Visit(this);
     }

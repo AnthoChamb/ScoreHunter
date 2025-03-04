@@ -100,7 +100,7 @@ namespace ScoreHunter
 
             public Builder HoldSustain(SustainEvent sustain)
             {
-                _score += (int)Math.Round(sustain.Frets.Count * Multiplier * _options.PointsPerSustain);
+                _score += (int)Math.Round(sustain.Count * Multiplier * _options.PointsPerSustain);
                 return this;
             }
 

@@ -97,7 +97,7 @@ namespace ScoreHunter.Factories
                                 (currentChordNode.Next == null ||
                                 activeSustains.Position < currentChordNode.Next.Value.Start))
                             {
-                                var sustainEvent = new SustainEvent(activeSustains.Position, activeSustains.Frets);
+                                var sustainEvent = new SustainEvent(activeSustains.Position, activeSustains.Count);
                                 var sustainEventNode = new EventNode(sustainEvent);
                                 previous.Next = sustainEventNode;
                                 previous = sustainEventNode;

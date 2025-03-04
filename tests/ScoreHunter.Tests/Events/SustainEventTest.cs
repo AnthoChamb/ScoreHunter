@@ -11,7 +11,7 @@ namespace ScoreHunter.Tests.Events
         public void Accept_SustainVisited()
         {
             // Arrange
-            var sustain = new SustainEvent(0, Frets.White1);
+            var sustain = new SustainEvent(0, 1);
             var visitor = new FakeEventVisitor();
 
             // Act
