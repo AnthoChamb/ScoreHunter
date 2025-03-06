@@ -8,26 +8,19 @@ namespace ScoreHunter
         private readonly Queue<ActiveSustain> _activeSustains;
         private readonly double _sustainLength;
 
-        public ActiveSustains(INote note, double sustainLength)
+        public ActiveSustains(double sustainLength)
         {
             _activeSustains = new Queue<ActiveSustain>(3);
             _sustainLength = sustainLength;
-            AddNote(note);
         }
 
         public int Count { get; private set; }
         public double Position { get; private set; }
-        public double End { get; private set; }
 
         public void AddNote(INote note)
         {
             var activeSustain = new ActiveSustain(note, _sustainLength);
             _activeSustains.Enqueue(activeSustain);
-
-            if (note.End > End)
-            {
-                End = note.End;
-            }
         }
 
         public bool MoveNext()

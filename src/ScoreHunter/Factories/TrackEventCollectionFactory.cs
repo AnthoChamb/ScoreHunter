@@ -23,7 +23,7 @@ namespace ScoreHunter.Factories
             if (track.Difficulties.TryGetValue(difficulty, out var difficultyTrack))
             {
                 var currentChordNode = difficultyTrack.GetFirstChordNode();
-                ActiveSustains activeSustains = null;
+                ActiveSustains activeSustains = new ActiveSustains(_options.SustainLength);
                 var hasActiveSustains = false;
                 var heroPowerCount = 0;
 
@@ -68,41 +68,25 @@ namespace ScoreHunter.Factories
                             previous = noteEventNode;
                         }
 
-                        if (activeSustains != null && currentChord.Start >= activeSustains.End)
-                        {
-                            activeSustains = null;
-                            hasActiveSustains = false;
-                        }
-
                         foreach (var sustainNote in currentChord.Notes.Where(note => note.IsSustain))
                         {
-                            if (activeSustains == null)
-                            {
-                                activeSustains = new ActiveSustains(sustainNote, _options.SustainLength);
-                            }
-                            else
-                            {
-                                activeSustains.AddNote(sustainNote);
-                            }
+                            activeSustains.AddNote(sustainNote);
                         }
 
-                        if (activeSustains != null)
+                        if (!hasActiveSustains)
                         {
-                            if (!hasActiveSustains)
-                            {
-                                hasActiveSustains = activeSustains.MoveNext();
-                            }
+                            hasActiveSustains = activeSustains.MoveNext();
+                        }
 
-                            while (hasActiveSustains &&
-                                (currentChordNode.Next == null ||
-                                activeSustains.Position < currentChordNode.Next.Value.Start))
-                            {
-                                var sustainEvent = new SustainEvent(activeSustains.Position, activeSustains.Count);
-                                var sustainEventNode = new EventNode(sustainEvent);
-                                previous.Next = sustainEventNode;
-                                previous = sustainEventNode;
-                                hasActiveSustains = activeSustains.MoveNext();
-                            }
+                        while (hasActiveSustains &&
+                            (currentChordNode.Next == null ||
+                            activeSustains.Position < currentChordNode.Next.Value.Start))
+                        {
+                            var sustainEvent = new SustainEvent(activeSustains.Position, activeSustains.Count);
+                            var sustainEventNode = new EventNode(sustainEvent);
+                            previous.Next = sustainEventNode;
+                            previous = sustainEventNode;
+                            hasActiveSustains = activeSustains.MoveNext();
                         }
 
                         currentChordNode = currentChordNode.Next;
