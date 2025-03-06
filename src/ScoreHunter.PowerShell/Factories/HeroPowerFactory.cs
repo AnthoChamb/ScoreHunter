@@ -1,7 +1,7 @@
-﻿using ScoreHunter.Core.Interfaces;
+﻿using CommunityToolkit.Diagnostics;
+using ScoreHunter.Core.Interfaces;
 using ScoreHunter.HeroPowers;
 using ScoreHunter.PowerShell.Enums;
-using System;
 
 namespace ScoreHunter.PowerShell.Factories
 {
@@ -16,7 +16,7 @@ namespace ScoreHunter.PowerShell.Factories
                 case HeroPowerParameter.DoubleMultiplier:
                     return new DoubleMultiplierHeroPower();
                 default:
-                    throw new ArgumentException(null, nameof(parameter));
+                    return ThrowHelper.ThrowArgumentException<IHeroPower>(nameof(parameter), null, null);
             }
         }
     }

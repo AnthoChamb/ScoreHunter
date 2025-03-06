@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Localization;
 using ScoreHunter.CommandLine.Enums;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Extensions.Localization.HeroPowers;
 using ScoreHunter.HeroPowers;
-using System;
 
 namespace ScoreHunter.CommandLine.Factories
 {
@@ -26,7 +26,7 @@ namespace ScoreHunter.CommandLine.Factories
                 HeroPowerOption.DoubleMultiplier => new LocalizedDoubleMultiplierHeroPower(
                     new DoubleMultiplierHeroPower(),
                     new StringLocalizer<LocalizedDoubleMultiplierHeroPower>(_stringLocalizerFactory)),
-                _ => throw new ArgumentException(null, nameof(option)),
+                _ => ThrowHelper.ThrowArgumentException<IHeroPower>(nameof(option), null, null),
             };
         }
     }
