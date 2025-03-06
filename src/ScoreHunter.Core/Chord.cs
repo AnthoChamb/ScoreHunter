@@ -31,7 +31,7 @@ namespace ScoreHunter.Core
         }
 
         public double Start => _first.Value.Start;
-        public Frets Frets => Notes.Aggregate(new Frets(), (frets, note) => frets.Add(note.Frets));
+        public Frets Frets => Notes.Select(note => note.Frets).Aggregate((chordFrets, noteFrets) => chordFrets.Add(noteFrets));
 
         public IChord Value => this;
         public IChordNode Next => _last.Next?.GetChordNode();
