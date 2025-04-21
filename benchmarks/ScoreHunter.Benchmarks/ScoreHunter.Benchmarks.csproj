@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-    <PackageReference Include="FsgXmk" Version="1.0.0" />
+    <PackageReference Include="FsgXmk" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
