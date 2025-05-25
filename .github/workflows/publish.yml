@@ -1,0 +1,26 @@
+name: Publish
+on:
+  release:
+    types:
+      - published
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore -p:Version=${{ github.event.release.tag_name }} -p:ContinuousIntegrationBuild=true
+      - name: Test
+        run: dotnet test -c Release --no-build
+      - name: Publish ScoreHunter.PowerShell.csproj
+        run: dotnet publish "src/ScoreHunter.Powershell/ScoreHunter.PowerShell.csproj" -c Release --no-build
+      - name: Create PowerShell module manifest
+        shell: pwsh
+        run: New-ModuleManifest -Path "src/ScoreHunter.Powershell/bin/Release/netstandard2.0/publish/ScoreHunter.psd1" -RootModule "ScoreHunter.PowerShell.dll" -ModuleVersion "${{ github.event.release.tag_name }}" -Author "AnthoChamb" -Copyright "Copyright (c) 2025 Anthony Chamberland" -ProjectUri "https://github.com/AnthoChamb/ScoreHunter" -LicenseUri "https://github.com/AnthoChamb/ScoreHunter/blob/main/LICENSE"
+      - name: Publish PowerShell module
+        shell: pwsh
+        run: Publish-Module -Path "src/ScoreHunter.Powershell/bin/Release/netstandard2.0/publish" -NuGetApiKey "${{ secrets.PSGALLERY_API_KEY }}"
