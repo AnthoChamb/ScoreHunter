@@ -13,7 +13,7 @@ namespace ScoreHunter.PowerShell.Commands
 {
     [Cmdlet(VerbsCommon.Get, "ScoreHunterPath")]
     [OutputType(typeof(IPath))]
-    public class GetScoreHunterPathCommand : Cmdlet
+    public class GetScoreHunterPathCommand : PSCmdlet
     {
         [Alias("PSPath")]
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -72,7 +72,7 @@ namespace ScoreHunter.PowerShell.Commands
 
             foreach (var path in LiteralPath)
             {
-                using (var stream = File.OpenRead(path))
+                using (var stream = File.OpenRead(SessionState.Path.GetUnresolvedProviderPathFromPSPath(path)))
                 using (var reader = trackStreamReaderFactory.Create(stream, true))
                 {
                     track = reader.Read();
