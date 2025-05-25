@@ -17,10 +17,10 @@ jobs:
       - name: Test
         run: dotnet test -c Release --no-build
       - name: Publish ScoreHunter.PowerShell.csproj
-        run: dotnet publish "src/ScoreHunter.PowerShell/ScoreHunter.PowerShell.csproj" -c Release --no-build
+        run: dotnet publish "src/ScoreHunter.PowerShell/ScoreHunter.PowerShell.csproj" -c Release --no-build -o "publish/ScoreHunter"
       - name: Create PowerShell module manifest
         shell: pwsh
-        run: New-ModuleManifest -Path "src/ScoreHunter.PowerShell/bin/Release/netstandard2.0/publish/ScoreHunter.psd1" -RootModule "ScoreHunter.PowerShell.dll" -ModuleVersion "${{ github.event.release.tag_name }}" -Author "AnthoChamb" -Copyright "Copyright (c) 2025 Anthony Chamberland" -ProjectUri "https://github.com/AnthoChamb/ScoreHunter" -LicenseUri "https://github.com/AnthoChamb/ScoreHunter/blob/main/LICENSE"
+        run: New-ModuleManifest -Path "publish/ScoreHunter/ScoreHunter.psd1" -RootModule "ScoreHunter.PowerShell.dll" -ModuleVersion "${{ github.event.release.tag_name }}" -Author "AnthoChamb" -Description "A score optimizer for GHTV's Score Chaser" -Copyright "Copyright (c) 2025 Anthony Chamberland" -ProjectUri "https://github.com/AnthoChamb/ScoreHunter" -LicenseUri "https://github.com/AnthoChamb/ScoreHunter/blob/main/LICENSE"
       - name: Publish PowerShell module
         shell: pwsh
-        run: Publish-Module -Path "src/ScoreHunter.PowerShell/bin/Release/netstandard2.0/publish" -NuGetApiKey "${{ secrets.PSGALLERY_API_KEY }}"
+        run: Publish-Module -Path "publish/ScoreHunter" -NuGetApiKey "${{ secrets.PSGALLERY_API_KEY }}"
