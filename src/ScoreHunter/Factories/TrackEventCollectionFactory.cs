@@ -23,7 +23,7 @@ namespace ScoreHunter.Factories
             if (track.Difficulties.TryGetValue(difficulty, out var difficultyTrack))
             {
                 var currentChordNode = difficultyTrack.GetFirstChordNode();
-                ActiveSustains activeSustains = new ActiveSustains(_options.SustainLength);
+                ActiveSustains activeSustains = new ActiveSustains(_options.SustainLength, _options.SustainBurstLength);
                 var hasActiveSustains = false;
                 var heroPowerCount = 0;
 

@@ -1,5 +1,4 @@
-﻿using ScoreHunter.Core;
-using ScoreHunter.Core.Events;
+﻿using ScoreHunter.Core.Events;
 using ScoreHunter.Testing;
 using Xunit;
 

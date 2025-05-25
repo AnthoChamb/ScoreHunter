@@ -42,7 +42,10 @@ namespace ScoreHunter.PowerShell.Commands
         public int StreakPerMultiplier { get; set; } = 6;
 
         [Parameter]
-        public double SustainLegth { get; set; } = 0.023;
+        public double SustainLength { get; set; } = 0.023;
+
+        [Parameter]
+        public double SustainBurstLength { get; set; } = 0.2;
 
         [Parameter]
         public int MaxHeroPowerCount { get; set; } = -1;
@@ -53,7 +56,7 @@ namespace ScoreHunter.PowerShell.Commands
             var heroPowers = HeroPower?.Select(heroPowerFactory.Create).ToArray() ?? Enumerable.Empty<IHeroPower>();
             var optimiserOptions = new OptimiserOptions(heroPowers, MaxMiss);
             var scoringOptions = new ScoringOptions(PointsPerNote, PointsPerSustain, MaxMultiplier, StreakPerMultiplier);
-            var trackOptions = new TrackOptions(SustainLegth, MaxHeroPowerCount);
+            var trackOptions = new TrackOptions(SustainLength, SustainBurstLength, MaxHeroPowerCount);
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
 
             var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());

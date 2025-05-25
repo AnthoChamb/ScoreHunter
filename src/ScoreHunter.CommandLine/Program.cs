@@ -61,6 +61,10 @@ namespace ScoreHunter.CommandLine
                 aliases: ["--sl", "--sustain-length"],
                 getDefaultValue: () => 0.023);
 
+            var sustainBurstLengthOption = new Option<double>(
+                aliases: ["--sbl", "--sustain-burst-length"],
+                getDefaultValue: () => 0.2);
+
             var maxHeroPowerCountOption = new Option<int>(
                 aliases: ["--mhpc", "--max-hero-power-count"],
                 getDefaultValue: () => -1);
@@ -84,7 +88,7 @@ namespace ScoreHunter.CommandLine
 
                 var optimiserOptionsBinder = new OptimiserOptionsBinder(heroPowersOption, maxMissOption, heroPowerFactory);
                 var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
-                var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, maxHeroPowerCountOption);
+                var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, sustainBurstLengthOption, maxHeroPowerCountOption);
 
                 rootCommand.SetHandler(Handle, fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
 

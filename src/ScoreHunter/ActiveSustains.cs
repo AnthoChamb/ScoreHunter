@@ -7,11 +7,13 @@ namespace ScoreHunter
     {
         private readonly Queue<ActiveSustain> _activeSustains;
         private readonly double _sustainLength;
+        private readonly double _sustainBurstLength;
 
-        public ActiveSustains(double sustainLength)
+        public ActiveSustains(double sustainLength, double sustainBurstLength)
         {
             _activeSustains = new Queue<ActiveSustain>(3);
             _sustainLength = sustainLength;
+            _sustainBurstLength = sustainBurstLength;
         }
 
         public int Count { get; private set; }
@@ -19,7 +21,7 @@ namespace ScoreHunter
 
         public void AddNote(INote note)
         {
-            var activeSustain = new ActiveSustain(note, _sustainLength);
+            var activeSustain = new ActiveSustain(note, _sustainLength, _sustainBurstLength);
             _activeSustains.Enqueue(activeSustain);
         }
 
@@ -35,7 +37,7 @@ namespace ScoreHunter
                     activeSustain = _activeSustains.Dequeue();
                     if (activeSustain.MoveNext())
                     {
-                        Count++;
+                        Count += activeSustain.Count;
                         _activeSustains.Enqueue(activeSustain);
                     }
                 } while (_activeSustains.Count > 0 &&
