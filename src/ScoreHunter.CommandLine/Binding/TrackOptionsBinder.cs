@@ -1,10 +1,9 @@
 ﻿using ScoreHunter.Options;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace ScoreHunter.CommandLine.Binding
 {
-    public class TrackOptionsBinder : BinderBase<TrackOptions>
+    public class TrackOptionsBinder
     {
         private readonly Option<double> _sustainLengthOption;
         private readonly Option<double> _sustainBurstLengthOption;
@@ -17,11 +16,11 @@ namespace ScoreHunter.CommandLine.Binding
             _maxHeroPowerCountOption = maxHeroPowerCountOption;
         }
 
-        protected override TrackOptions GetBoundValue(BindingContext bindingContext)
+        public TrackOptions GetBoundValue(ParseResult parseResult)
         {
-            var sustainLength = bindingContext.ParseResult.GetValueForOption(_sustainLengthOption);
-            var sustainBurstLength = bindingContext.ParseResult.GetValueForOption(_sustainBurstLengthOption);
-            var maxHeroPowerCount = bindingContext.ParseResult.GetValueForOption(_maxHeroPowerCountOption);
+            var sustainLength = parseResult.GetRequiredValue(_sustainLengthOption);
+            var sustainBurstLength = parseResult.GetRequiredValue(_sustainBurstLengthOption);
+            var maxHeroPowerCount = parseResult.GetRequiredValue(_maxHeroPowerCountOption);
 
             return new TrackOptions(sustainLength, sustainBurstLength, maxHeroPowerCount);
         }

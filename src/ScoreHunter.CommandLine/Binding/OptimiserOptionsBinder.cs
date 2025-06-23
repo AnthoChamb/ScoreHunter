@@ -1,15 +1,13 @@
 ﻿using ScoreHunter.CommandLine.Enums;
 using ScoreHunter.CommandLine.Factories;
-using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Options;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Binding;
 using System.Linq;
 
 namespace ScoreHunter.CommandLine.Binding
 {
-    public class OptimiserOptionsBinder : BinderBase<OptimiserOptions>
+    public class OptimiserOptionsBinder
     {
         private readonly Option<IEnumerable<HeroPowerOption>> _heroPowersOption;
         private readonly Option<int> _maxMissOption;
@@ -22,12 +20,12 @@ namespace ScoreHunter.CommandLine.Binding
             _heroPowerFactory = heroPowerFactory;
         }
 
-        protected override OptimiserOptions GetBoundValue(BindingContext bindingContext)
+        public OptimiserOptions GetBoundValue(ParseResult parseResult)
         {
-            var heroPowersOptions = bindingContext.ParseResult.GetValueForOption(_heroPowersOption);
-            var heroPowers = heroPowersOptions?.Select(_heroPowerFactory.Create).ToArray() ?? Enumerable.Empty<IHeroPower>();
+            var heroPowersOptions = parseResult.GetRequiredValue(_heroPowersOption);
+            var heroPowers = heroPowersOptions.Select(_heroPowerFactory.Create).ToArray();
 
-            var maxMiss = bindingContext.ParseResult.GetValueForOption(_maxMissOption);
+            var maxMiss = parseResult.GetRequiredValue(_maxMissOption);
 
             return new OptimiserOptions(heroPowers, maxMiss);
         }

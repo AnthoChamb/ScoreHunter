@@ -1,10 +1,9 @@
 ﻿using ScoreHunter.Options;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace ScoreHunter.CommandLine.Binding
 {
-    public class ScoringOptionsBinder : BinderBase<ScoringOptions>
+    public class ScoringOptionsBinder
     {
         private readonly Option<double> _pointsPerNoteOption;
         private readonly Option<double> _pointsPerSustainOption;
@@ -19,12 +18,12 @@ namespace ScoreHunter.CommandLine.Binding
             _streakPerMultiplierOption = streakPerMultiplierOption;
         }
 
-        protected override ScoringOptions GetBoundValue(BindingContext bindingContext)
+        public ScoringOptions GetBoundValue(ParseResult parseResult)
         {
-            var pointsPerNote = bindingContext.ParseResult.GetValueForOption(_pointsPerNoteOption);
-            var pointsPerSustain = bindingContext.ParseResult.GetValueForOption(_pointsPerSustainOption);
-            var maxMultiplier = bindingContext.ParseResult.GetValueForOption(_maxMultiplierOption);
-            var streakPerMultiplier = bindingContext.ParseResult.GetValueForOption(_streakPerMultiplierOption);
+            var pointsPerNote = parseResult.GetRequiredValue(_pointsPerNoteOption);
+            var pointsPerSustain = parseResult.GetRequiredValue(_pointsPerSustainOption);
+            var maxMultiplier = parseResult.GetRequiredValue(_maxMultiplierOption);
+            var streakPerMultiplier = parseResult.GetRequiredValue(_streakPerMultiplierOption);
 
             return new ScoringOptions(pointsPerNote, pointsPerSustain, maxMultiplier, streakPerMultiplier);
         }
