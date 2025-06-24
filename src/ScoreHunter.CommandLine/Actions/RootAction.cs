@@ -56,7 +56,7 @@ namespace ScoreHunter.CommandLine.Actions
             using (var stream = file.OpenRead())
             using (var reader = trackStreamReaderFactory.Create(stream, true))
             {
-                track = await reader.ReadAsync();
+                track = await reader.ReadAsync(cancellationToken);
             }
 
             var optimalPath = optimiser.Optimize(track, difficulty);

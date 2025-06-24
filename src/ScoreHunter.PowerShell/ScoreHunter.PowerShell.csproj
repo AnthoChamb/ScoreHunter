@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FsgXmk" Version="1.1.0" />
+    <PackageReference Include="FsgXmk" Version="1.1.1" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
   </ItemGroup>
 

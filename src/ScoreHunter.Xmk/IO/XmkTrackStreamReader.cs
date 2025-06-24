@@ -4,6 +4,7 @@ using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Core.Interfaces.IO;
 using ScoreHunter.Xmk.Builders;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScoreHunter.Xmk.IO
@@ -101,13 +102,13 @@ namespace ScoreHunter.Xmk.IO
             return builder.Build();
         }
 
-        public async Task<ITrack> ReadAsync()
+        public async Task<ITrack> ReadAsync(CancellationToken cancellationToken = default)
         {
             IXmkHeader header;
 
             using (var headerReader = _headerStreamReaderFactory.Create(_stream, true))
             {
-                header = await headerReader.ReadAsync();
+                header = await headerReader.ReadAsync(cancellationToken);
             }
 
             var builder = new XmkTrackBuilder();
@@ -116,7 +117,7 @@ namespace ScoreHunter.Xmk.IO
             {
                 for (var i = 0; i < header.TempoCount; i++)
                 {
-                    var xmkTempo = await tempoReader.ReadAsync();
+                    var xmkTempo = await tempoReader.ReadAsync(cancellationToken);
                     builder.AddXmkTempo(xmkTempo);
                 }
             }
@@ -125,7 +126,7 @@ namespace ScoreHunter.Xmk.IO
             {
                 for (var i = 0; i < header.TimeSignatureCount; i++)
                 {
-                    var xmkTimeSignature = await timeSignatureReader.ReadAsync();
+                    var xmkTimeSignature = await timeSignatureReader.ReadAsync(cancellationToken);
                     builder.AddXmkTimeSignature(xmkTimeSignature);
                 }
             }
@@ -134,7 +135,7 @@ namespace ScoreHunter.Xmk.IO
             {
                 for (var i = 0; i < header.EventCount; i++)
                 {
-                    var xmkEvent = await eventReader.ReadAsync();
+                    var xmkEvent = await eventReader.ReadAsync(cancellationToken);
                     builder.AddXmkEvent(xmkEvent);
                 }
             }
