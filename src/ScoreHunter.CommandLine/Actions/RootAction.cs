@@ -3,7 +3,6 @@ using ScoreHunter.CommandLine.Binding;
 using ScoreHunter.Core.Enums;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Xmk.Factories;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -61,12 +60,12 @@ namespace ScoreHunter.CommandLine.Actions
 
             var optimalPath = optimiser.Optimize(track, difficulty);
 
-            Console.WriteLine("Estimated score: " + optimalPath.Score);
-            Console.WriteLine("Miss: " + optimalPath.Miss);
+            parseResult.Configuration.Output.WriteLine("Estimated score: " + optimalPath.Score);
+            parseResult.Configuration.Output.WriteLine("Miss: " + optimalPath.Miss);
 
             foreach (var activation in optimalPath.Activations)
             {
-                Console.WriteLine("Hero Power: " + activation.HeroPower + ", Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
+                parseResult.Configuration.Output.WriteLine("Hero Power: " + activation.HeroPower + ", Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
             }
 
             return 0;
