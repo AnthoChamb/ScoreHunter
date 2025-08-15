@@ -28,7 +28,7 @@ namespace ScoreHunter
             private IHeroPower _heroPower;
             private int _heroPowerCount;
             private double _heroPowerEnd;
-            private IImmutableList<IActivation> _activations;
+            private IImmutableList<Activation> _activations;
             private readonly ScoringOptions _options;
 
             public Builder(Candidate scoring)
@@ -124,6 +124,7 @@ namespace ScoreHunter
 
             public Builder EndHeroPower()
             {
+                _activations[_activations.Count - 1].End = _heroPowerEnd;
                 _flags &= ~ScoringFlags.HeroPower;
                 _flags |= ScoringFlags.ChainHeroPower;
                 _heroPowerEnd = 0;
@@ -189,7 +190,7 @@ namespace ScoreHunter
         private readonly int _heroPowerCount;
         private readonly double _heroPowerEnd;
 
-        private readonly IImmutableList<IActivation> _activations = ImmutableList.Create<IActivation>();
+        private readonly IImmutableList<Activation> _activations = ImmutableList.Create<Activation>();
 
         public Candidate(ScoringOptions options)
         {
@@ -204,7 +205,7 @@ namespace ScoreHunter
                         IHeroPower heroPower,
                         int heroPowerCount,
                         double heroPowerEnd,
-                        IImmutableList<IActivation> activations,
+                        IImmutableList<Activation> activations,
                         ScoringOptions options)
         {
             Score = score;

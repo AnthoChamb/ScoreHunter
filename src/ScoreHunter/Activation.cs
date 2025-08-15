@@ -13,6 +13,8 @@ namespace ScoreHunter
             IsChained = isChained;
         }
 
+        public double Start => Event.Start;
+        public double End { get; set; } = double.PositiveInfinity;
         public IHeroPower HeroPower { get; }
         public Event Event { get; }
         public int Streak { get; }
