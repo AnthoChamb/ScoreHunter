@@ -98,7 +98,7 @@ namespace ScoreHunter.Drawing.Factories
                     }
                 }
             }
-            return new Tablature(staves);
+            return new Tablature(track.TicksPerQuarterNote, options.TicksPerStaff, staves);
         }
     }
 }
