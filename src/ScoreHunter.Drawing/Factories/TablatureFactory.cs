@@ -67,7 +67,7 @@ namespace ScoreHunter.Drawing.Factories
 
                                 while (hasTempo && temposEnumerator.Current.Ticks < endTicks)
                                 {
-                                    AddNotes(currentTempo.Ticks);
+                                    AddNotes(temposEnumerator.Current.Ticks);
 
                                     currentTempo = temposEnumerator.Current;
                                     tempos.Add(currentTempo);
