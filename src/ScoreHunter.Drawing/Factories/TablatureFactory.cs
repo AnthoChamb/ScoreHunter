@@ -33,6 +33,7 @@ namespace ScoreHunter.Drawing.Factories
                     {
                         var startTicks = 0;
                         var tempos = new List<ITempo>(1);
+                        var sustains = new List<DrawnSustain>();
 
                         var currentTimeSignature = timeSignaturesEnumerator.Current;
                         hasTimeSignature = timeSignaturesEnumerator.MoveNext();
@@ -43,12 +44,13 @@ namespace ScoreHunter.Drawing.Factories
 
                         var hasNote = notesEnumerator.MoveNext();
 
-                        while (hasNote)
+                        while (hasNote || hasTempo || sustains.Count > 0)
                         {
                             var staffStartTicks = startTicks;
                             var measures = new List<IMeasure>(_options.TicksPerStaff / currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote));
 
-                            while (hasNote && (startTicks - staffStartTicks) <= (_options.TicksPerStaff - currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote)))
+                            while ((hasNote || hasTempo || sustains.Any(sustain => sustain.EndTicks > startTicks)) &&
+                                (startTicks - staffStartTicks) <= (_options.TicksPerStaff - currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote)))
                             {
                                 var start = currentTempo.TicksToSeconds(startTicks, track.TicksPerQuarterNote);
                                 var endTicks = startTicks + currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote);
@@ -61,7 +63,26 @@ namespace ScoreHunter.Drawing.Factories
                                     while (hasNote && (ticks = currentTempo.SecondsToTicks((note = notesEnumerator.Current).Start, track.TicksPerQuarterNote)) < notesEndTicks)
                                     {
                                         notes.Add(new DrawnNote(note, ticks));
+                                        if (note.IsSustain)
+                                        {
+                                            var sustain = new DrawnSustain(note, ticks);
+                                            sustains.Add(sustain);
+                                            SetSustainEndTicks(sustain);
+                                        }
                                         hasNote = notesEnumerator.MoveNext();
+                                    }
+                                }
+
+                                void SetSustainEndTicks(DrawnSustain sustain)
+                                {
+                                    int ticks;
+                                    if (!hasTempo)
+                                    {
+                                        sustain.EndTicks = currentTempo.SecondsToTicks(sustain.End, track.TicksPerQuarterNote);
+                                    }
+                                    else if ((ticks = currentTempo.SecondsToTicks(sustain.End, track.TicksPerQuarterNote)) < temposEnumerator.Current.Ticks)
+                                    {
+                                        sustain.EndTicks = ticks;
                                     }
                                 }
 
@@ -72,6 +93,14 @@ namespace ScoreHunter.Drawing.Factories
                                     currentTempo = temposEnumerator.Current;
                                     tempos.Add(currentTempo);
                                     hasTempo = temposEnumerator.MoveNext();
+
+                                    foreach (var sustain in sustains)
+                                    {
+                                        if (sustain.EndTicks == -1)
+                                        {
+                                            SetSustainEndTicks(sustain);
+                                        }
+                                    }
                                 }
 
                                 AddNotes(endTicks);
@@ -93,14 +122,27 @@ namespace ScoreHunter.Drawing.Factories
                                 }
                             }
 
+                            var nextSustains = new List<DrawnSustain>(sustains.Count);
+
+                            foreach (var sustain in sustains)
+                            {
+                                if (sustain.EndTicks == -1 || sustain.EndTicks > startTicks)
+                                {
+                                    nextSustains.Add(new DrawnSustain(sustain, startTicks));
+                                    sustain.EndTicks = startTicks;
+                                }
+                            }
+
                             staves.Add(new Staff(staffStartTicks,
                                                  startTicks,
                                                  measures,
-                                                 // TODO: Add lists
-                                                 Enumerable.Empty<IDrawnSustain>(),
+                                                 sustains,
+                                                 // TODO: Add lists,
                                                  Enumerable.Empty<IDrawnPhrase>(),
                                                  Enumerable.Empty<IDrawnPhrase>(),
                                                  Enumerable.Empty<IDrawnActivation>()));
+
+                            sustains = nextSustains;
                         }
                     }
                 }

@@ -20,6 +20,7 @@ namespace ScoreHunter.Drawing.Svg.IO
         private const double TextPaddingY = 4;
         private const double TextFontSize = 8;
         private const double NoteSize = 11;
+        private const double SustainHeight = 7;
 
         private readonly XmlWriter _writer;
 
@@ -106,6 +107,56 @@ namespace ScoreHunter.Drawing.Svg.IO
                 _writer.WriteAttributeString(null, "stroke-width", null, "1");
                 _writer.WriteEndElement();
 
+                foreach (var sustain in staff.Sustains)
+                {
+                    var sustainX = StaffPaddingX + TicksToPixels(sustain.StartTicks - staff.StartTicks);
+                    var sustainWidth = TicksToPixels(sustain.EndTicks - sustain.StartTicks);
+
+                    switch (sustain.Frets.Flags)
+                    {
+                        case FretFlags.Black1:
+                        case FretFlags.White1:
+                        case FretFlags.Black1 | FretFlags.White1:
+                            _writer.WriteStartElement(null, "rect", null);
+                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "y", null, (staffY - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "stroke", null, "gray");
+                            _writer.WriteAttributeString(null, "fill", null, "gray");
+                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                            _writer.WriteEndElement();
+                            break;
+                        case FretFlags.Open:
+                        case FretFlags.Black2:
+                        case FretFlags.White2:
+                        case FretFlags.Black2 | FretFlags.White2:
+                            _writer.WriteStartElement(null, "rect", null);
+                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "stroke", null, "gray");
+                            _writer.WriteAttributeString(null, "fill", null, "gray");
+                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                            _writer.WriteEndElement();
+                            break;
+                        case FretFlags.Black3:
+                        case FretFlags.White3:
+                        case FretFlags.Black3 | FretFlags.White3:
+                            _writer.WriteStartElement(null, "rect", null);
+                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
+                            _writer.WriteAttributeString(null, "stroke", null, "gray");
+                            _writer.WriteAttributeString(null, "fill", null, "gray");
+                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                            _writer.WriteEndElement();
+                            break;
+                    }
+                }
+
                 foreach (var measure in staff.Measures)
                 {
                     measureCount++;
@@ -174,7 +225,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                         _writer.WriteEndElement();
                     }
 
-                    foreach(var beat in measure.Beats)
+                    foreach (var beat in measure.Beats)
                     {
                         var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
 
