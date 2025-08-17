@@ -44,23 +44,22 @@ namespace ScoreHunter.Drawing.Factories
                             while (hasNote && (startTicks - staffStartTicks) <= (options.TicksPerStaff - currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote)))
                             {
                                 var start = currentTempo.TicksToSeconds(startTicks, track.TicksPerQuarterNote);
-                                double end;
                                 var endTicks = startTicks + currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote);
                                 var notes = new List<IDrawnNote>();
 
                                 void AddNotes()
                                 {
-                                    while (hasNote && notesEnumerator.Current.Start < end)
+                                    INote note;
+                                    int ticks;
+                                    while (hasNote && (ticks = currentTempo.SecondsToTicks((note = notesEnumerator.Current).Start, track.TicksPerQuarterNote)) < endTicks)
                                     {
-                                        var note = notesEnumerator.Current;
-                                        notes.Add(new DrawnNote(note, currentTempo.SecondsToTicks(note.Start, track.TicksPerQuarterNote)));
+                                        notes.Add(new DrawnNote(note, ticks));
                                         hasNote = notesEnumerator.MoveNext();
                                     }
                                 }
 
                                 while (hasTempo && temposEnumerator.Current.Ticks < endTicks)
                                 {
-                                    end = currentTempo.TicksToSeconds(endTicks, track.TicksPerQuarterNote);
                                     AddNotes();
 
                                     currentTempo = temposEnumerator.Current;
@@ -68,7 +67,6 @@ namespace ScoreHunter.Drawing.Factories
                                     hasTempo = temposEnumerator.MoveNext();
                                 }
 
-                                end = currentTempo.TicksToSeconds(endTicks, track.TicksPerQuarterNote);
                                 AddNotes();
 
                                 measures.Add(new Measure(startTicks,
