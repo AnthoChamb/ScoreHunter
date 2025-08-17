@@ -9,7 +9,14 @@ namespace ScoreHunter.Drawing.Factories
 {
     public class TablatureFactory
     {
-        public ITablature Create(ITrack track, Difficulty difficulty, IPath path, TablatureOptions options)
+        private readonly TablatureOptions _options;
+
+        public TablatureFactory(TablatureOptions options)
+        {
+            _options = options;
+        }
+
+        public ITablature Create(ITrack track, Difficulty difficulty, IPath path)
         {
             var staves = new List<IStaff>();
 
@@ -39,9 +46,9 @@ namespace ScoreHunter.Drawing.Factories
                         while (hasNote)
                         {
                             var staffStartTicks = startTicks;
-                            var measures = new List<IMeasure>(options.TicksPerStaff / currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote));
+                            var measures = new List<IMeasure>(_options.TicksPerStaff / currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote));
 
-                            while (hasNote && (startTicks - staffStartTicks) <= (options.TicksPerStaff - currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote)))
+                            while (hasNote && (startTicks - staffStartTicks) <= (_options.TicksPerStaff - currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote)))
                             {
                                 var start = currentTempo.TicksToSeconds(startTicks, track.TicksPerQuarterNote);
                                 var endTicks = startTicks + currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote);
@@ -98,7 +105,7 @@ namespace ScoreHunter.Drawing.Factories
                     }
                 }
             }
-            return new Tablature(track.TicksPerQuarterNote, options.TicksPerStaff, staves);
+            return new Tablature(track.TicksPerQuarterNote, _options.TicksPerStaff, staves);
         }
     }
 }

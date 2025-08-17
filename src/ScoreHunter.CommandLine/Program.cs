@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FsgXmk.Abstractions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ScoreHunter.CommandLine.Actions;
@@ -25,6 +26,8 @@ namespace ScoreHunter.CommandLine
             var rootCommand = new RootCommand();
 
             var fileArgument = new Argument<FileInfo>("file");
+
+            var outputOption = new Option<FileInfo>("--output", "-o");
 
             var difficultyOption = new Option<Difficulty>("--difficulty", "-d")
             {
@@ -76,7 +79,13 @@ namespace ScoreHunter.CommandLine
                 DefaultValueFactory = _ => -1
             };
 
+            var ticksPerStaffOption = new Option<int>("--ticks-per-staff", "--tps")
+            {
+                DefaultValueFactory = _ => XmkConstants.TicksPerQuarterNote * 4 * 4
+            };
+
             rootCommand.Arguments.Add(fileArgument);
+            rootCommand.Options.Add(outputOption);
             rootCommand.Options.Add(difficultyOption);
             rootCommand.Options.Add(heroPowersOption);
             rootCommand.Options.Add(maxMissOption);
@@ -87,6 +96,7 @@ namespace ScoreHunter.CommandLine
             rootCommand.Options.Add(sustainLengthOption);
             rootCommand.Options.Add(sustainBurstLengthOption);
             rootCommand.Options.Add(maxHeroPowerCountOption);
+            rootCommand.Options.Add(ticksPerStaffOption);
 
             var localizationOptions = new LocalizationOptions { ResourcesPath = "Resources" };
             using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
@@ -97,8 +107,9 @@ namespace ScoreHunter.CommandLine
                 var optimiserOptionsBinder = new OptimiserOptionsBinder(heroPowersOption, maxMissOption, heroPowerFactory);
                 var scoringOptionsBinder = new ScoringOptionsBinder(pointsPerNoteOption, pointsPerSustainOption, maxMultiplierOption, streakPerMultiplierOption);
                 var trackOptionsBinder = new TrackOptionsBinder(sustainLengthOption, sustainBurstLengthOption, maxHeroPowerCountOption);
+                var tablatureOptionsBinder = new TablatureOptionsBinder(ticksPerStaffOption);
 
-                var rootAction = new RootAction(fileArgument, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder);
+                var rootAction = new RootAction(fileArgument, outputOption, difficultyOption, optimiserOptionsBinder, scoringOptionsBinder, trackOptionsBinder, tablatureOptionsBinder);
                 rootCommand.Action = rootAction;
 
                 await rootCommand.Parse(args).InvokeAsync();

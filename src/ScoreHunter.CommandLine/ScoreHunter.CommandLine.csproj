@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ScoreHunter.Drawing.Svg\ScoreHunter.Drawing.Svg.csproj" />
+    <ProjectReference Include="..\ScoreHunter.Drawing\ScoreHunter.Drawing.csproj" />
     <ProjectReference Include="..\ScoreHunter.Extensions.Localization\ScoreHunter.Extensions.Localization.csproj" />
     <ProjectReference Include="..\ScoreHunter.Xmk\ScoreHunter.Xmk.csproj" />
     <ProjectReference Include="..\ScoreHunter\ScoreHunter.csproj" />
