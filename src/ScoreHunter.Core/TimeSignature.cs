@@ -14,5 +14,10 @@ namespace ScoreHunter.Core
         public int Ticks { get; }
         public int Numerator { get; }
         public int Denominator { get; }
+
+        public int TicksPerMeasure(int ticksPerQuarterNote)
+        {
+            return ticksPerQuarterNote * 4 * Numerator / Denominator;
+        }
     }
 }
