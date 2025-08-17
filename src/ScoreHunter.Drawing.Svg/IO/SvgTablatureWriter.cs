@@ -1,4 +1,5 @@
 ﻿using ScoreHunter.Core.Enums;
+using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces.IO;
 using System;
@@ -59,6 +60,7 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteAttributeString(null, "width", null, (StaffPaddingX * 2 + TicksToPixels(tablature.TicksPerStaff)).ToString(CultureInfo.InvariantCulture));
             _writer.WriteAttributeString(null, "height", null, (StaffPaddingY * 2 + ((StaffHeight + StaffPaddingY) * tablature.Staves.Count())).ToString(CultureInfo.InvariantCulture));
 
+            ITimeSignature currentTimeSignature = null;
             var measureCount = 0;
             var staffY = StaffPaddingY;
 
@@ -128,6 +130,33 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteAttributeString(null, "stroke", null, "black");
                     _writer.WriteAttributeString(null, "stroke-width", null, "1");
                     _writer.WriteEndElement();
+
+                    if (measure.TimeSignature != currentTimeSignature)
+                    {
+                        currentTimeSignature = measure.TimeSignature;
+
+                        _writer.WriteStartElement(null, "text", null);
+                        _writer.WriteAttributeString(null, "x", null, (measureX + TextFontSize).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
+                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "fill", null, "gray");
+
+                        _writer.WriteString(currentTimeSignature.Numerator.ToString());
+
+                        _writer.WriteEndElement();
+
+                        _writer.WriteStartElement(null, "text", null);
+                        _writer.WriteAttributeString(null, "x", null, (measureX + TextFontSize).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
+                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "fill", null, "gray");
+
+                        _writer.WriteString(currentTimeSignature.Denominator.ToString());
+
+                        _writer.WriteEndElement();
+                    }
 
                     foreach (var tempo in measure.Tempos)
                     {
