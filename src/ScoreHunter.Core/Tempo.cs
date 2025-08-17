@@ -1,4 +1,5 @@
 ﻿using ScoreHunter.Core.Interfaces;
+using System;
 
 namespace ScoreHunter.Core
 {
@@ -19,6 +20,11 @@ namespace ScoreHunter.Core
         public double TicksToSeconds(int ticks, int ticksPerQuarterNote)
         {
             return Start + (ticks - Ticks) * SecondsPerTicks(ticksPerQuarterNote);
+        }
+
+        public int SecondsToTicks(double start, int ticksPerQuarterNote)
+        {
+            return Ticks + (int)Math.Round((start - Start) / SecondsPerTicks(ticksPerQuarterNote));
         }
 
         private double SecondsPerTicks(int ticksPerQuarterNote)

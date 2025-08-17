@@ -7,5 +7,6 @@
         int MicroSecondsPerQuarterNote { get; }
 
         double TicksToSeconds(int ticks, int ticksPerQuarterNote);
+        int SecondsToTicks(double start, int ticksPerQuarterNote);
     }
 }
