@@ -107,6 +107,63 @@ namespace ScoreHunter.Drawing.Svg.IO
                 _writer.WriteAttributeString(null, "stroke-width", null, "1");
                 _writer.WriteEndElement();
 
+
+                foreach (var measure in staff.Measures)
+                {
+                    var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
+
+                    _writer.WriteStartElement(null, "line", null);
+                    _writer.WriteAttributeString(null, "x1", null, measureX.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "x2", null, measureX.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "stroke", null, "black");
+                    _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                    _writer.WriteEndElement();
+
+                    if (measure.TimeSignature != currentTimeSignature)
+                    {
+                        currentTimeSignature = measure.TimeSignature;
+                        var timeSignatureX = measureX + TicksToPixels(currentTimeSignature.Ticks - measure.StartTicks) + TextFontSize;
+
+                        _writer.WriteStartElement(null, "text", null);
+                        _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
+                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "fill", null, "gray");
+
+                        _writer.WriteString(currentTimeSignature.Numerator.ToString());
+
+                        _writer.WriteEndElement();
+
+                        _writer.WriteStartElement(null, "text", null);
+                        _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
+                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "fill", null, "gray");
+
+                        _writer.WriteString(currentTimeSignature.Denominator.ToString());
+
+                        _writer.WriteEndElement();
+                    }
+
+                    foreach (var beat in measure.Beats)
+                    {
+                        var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
+
+                        _writer.WriteStartElement(null, "line", null);
+                        _writer.WriteAttributeString(null, "x1", null, beatX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "x2", null, beatX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "stroke", null, "gray");
+                        _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                        _writer.WriteEndElement();
+                    }
+                }
+
                 foreach (var sustain in staff.Sustains)
                 {
                     var sustainX = StaffPaddingX + TicksToPixels(sustain.StartTicks - staff.StartTicks);
@@ -173,42 +230,6 @@ namespace ScoreHunter.Drawing.Svg.IO
 
                     _writer.WriteEndElement();
 
-                    _writer.WriteStartElement(null, "line", null);
-                    _writer.WriteAttributeString(null, "x1", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "x2", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "stroke", null, "black");
-                    _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                    _writer.WriteEndElement();
-
-                    if (measure.TimeSignature != currentTimeSignature)
-                    {
-                        currentTimeSignature = measure.TimeSignature;
-
-                        _writer.WriteStartElement(null, "text", null);
-                        _writer.WriteAttributeString(null, "x", null, (measureX + TextFontSize).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
-                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "fill", null, "gray");
-
-                        _writer.WriteString(currentTimeSignature.Numerator.ToString());
-
-                        _writer.WriteEndElement();
-
-                        _writer.WriteStartElement(null, "text", null);
-                        _writer.WriteAttributeString(null, "x", null, (measureX + TextFontSize).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
-                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "fill", null, "gray");
-
-                        _writer.WriteString(currentTimeSignature.Denominator.ToString());
-
-                        _writer.WriteEndElement();
-                    }
-
                     foreach (var tempo in measure.Tempos)
                     {
                         var tempoX = measureX + TicksToPixels(tempo.Ticks - measure.StartTicks);
@@ -222,20 +243,6 @@ namespace ScoreHunter.Drawing.Svg.IO
 
                         _writer.WriteString("\u2669=" + Math.Round(tempo.BeatsPerMinute));
 
-                        _writer.WriteEndElement();
-                    }
-
-                    foreach (var beat in measure.Beats)
-                    {
-                        var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
-
-                        _writer.WriteStartElement(null, "line", null);
-                        _writer.WriteAttributeString(null, "x1", null, beatX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "x2", null, beatX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "stroke", null, "gray");
-                        _writer.WriteAttributeString(null, "stroke-width", null, "1");
                         _writer.WriteEndElement();
                     }
 
