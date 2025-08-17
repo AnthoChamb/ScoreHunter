@@ -174,6 +174,20 @@ namespace ScoreHunter.Drawing.Svg.IO
                         _writer.WriteEndElement();
                     }
 
+                    foreach(var beat in measure.Beats)
+                    {
+                        var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
+
+                        _writer.WriteStartElement(null, "line", null);
+                        _writer.WriteAttributeString(null, "x1", null, beatX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "x2", null, beatX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "stroke", null, "gray");
+                        _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                        _writer.WriteEndElement();
+                    }
+
                     foreach (var note in measure.Notes)
                     {
                         var noteX = measureX + TicksToPixels(note.Ticks - measure.StartTicks);
