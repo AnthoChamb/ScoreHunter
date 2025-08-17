@@ -4,13 +4,11 @@ namespace ScoreHunter.Drawing
 {
     public class Beat : IBeat
     {
-        public Beat(int ticks, double start)
+        public Beat(int ticks)
         {
             Ticks = ticks;
-            Start = start;
         }
 
         public int Ticks { get; }
-        public double Start { get; }
     }
 }
