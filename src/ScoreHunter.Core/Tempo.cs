@@ -16,6 +16,7 @@ namespace ScoreHunter.Core
         public double Start { get; }
         public int MicroSecondsPerQuarterNote { get; }
         private double SecondsPerQuarterNote => MicroSecondsPerQuarterNote / 1_000_000.0;
+        public double BeatsPerMinute => 60_000_000.0 / MicroSecondsPerQuarterNote;
 
         public double TicksToSeconds(int ticks, int ticksPerQuarterNote)
         {

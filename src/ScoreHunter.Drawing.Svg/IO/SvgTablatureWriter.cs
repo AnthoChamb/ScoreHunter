@@ -1,6 +1,7 @@
 ﻿using ScoreHunter.Core.Enums;
 using ScoreHunter.Drawing.Abstractions.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces.IO;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace ScoreHunter.Drawing.Svg.IO
         private const double StaffPaddingX = 30;
         private const double StaffPaddingY = 45;
         private const double StaffHeight = 30;
+        private const double TextPaddingY = 4;
+        private const double TextFontSize = 8;
         private const double NoteSize = 11;
 
         private readonly XmlWriter _writer;
@@ -62,6 +65,8 @@ namespace ScoreHunter.Drawing.Svg.IO
             foreach (var staff in tablature.Staves)
             {
                 var staffX2 = StaffPaddingX + TicksToPixels(staff.EndTicks - staff.StartTicks);
+                var measureCountY = staffY - (NoteSize / 2 + TextPaddingY);
+                var tempoY = measureCountY - (TextFontSize + TextPaddingY);
 
                 _writer.WriteStartElement(null, "line", null);
                 _writer.WriteAttributeString(null, "x1", null, StaffPaddingX.ToString(CultureInfo.InvariantCulture));
@@ -106,9 +111,9 @@ namespace ScoreHunter.Drawing.Svg.IO
 
                     _writer.WriteStartElement(null, "text", null);
                     _writer.WriteAttributeString(null, "x", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y", null, (staffY - 8).ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y", null, measureCountY.ToString(CultureInfo.InvariantCulture));
                     _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
-                    _writer.WriteAttributeString(null, "font-size", null, "8");
+                    _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
                     _writer.WriteAttributeString(null, "fill", null, "red");
 
                     _writer.WriteString(measureCount.ToString());
@@ -123,6 +128,22 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteAttributeString(null, "stroke", null, "black");
                     _writer.WriteAttributeString(null, "stroke-width", null, "1");
                     _writer.WriteEndElement();
+
+                    foreach (var tempo in measure.Tempos)
+                    {
+                        var tempoX = measureX + TicksToPixels(tempo.Ticks - measure.StartTicks);
+
+                        _writer.WriteStartElement(null, "text", null);
+                        _writer.WriteAttributeString(null, "x", null, tempoX.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "y", null, tempoY.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
+                        _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
+                        _writer.WriteAttributeString(null, "fill", null, "gray");
+
+                        _writer.WriteString("\u2669=" + Math.Round(tempo.BeatsPerMinute));
+
+                        _writer.WriteEndElement();
+                    }
 
                     foreach (var note in measure.Notes)
                     {
