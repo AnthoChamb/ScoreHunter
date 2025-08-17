@@ -54,11 +54,11 @@ namespace ScoreHunter.Drawing.Factories
                                 var endTicks = startTicks + currentTimeSignature.TicksPerMeasure(track.TicksPerQuarterNote);
                                 var notes = new List<IDrawnNote>();
 
-                                void AddNotes()
+                                void AddNotes(int notesEndTicks)
                                 {
                                     INote note;
                                     int ticks;
-                                    while (hasNote && (ticks = currentTempo.SecondsToTicks((note = notesEnumerator.Current).Start, track.TicksPerQuarterNote)) < endTicks)
+                                    while (hasNote && (ticks = currentTempo.SecondsToTicks((note = notesEnumerator.Current).Start, track.TicksPerQuarterNote)) < notesEndTicks)
                                     {
                                         notes.Add(new DrawnNote(note, ticks));
                                         hasNote = notesEnumerator.MoveNext();
@@ -67,14 +67,14 @@ namespace ScoreHunter.Drawing.Factories
 
                                 while (hasTempo && temposEnumerator.Current.Ticks < endTicks)
                                 {
-                                    AddNotes();
+                                    AddNotes(currentTempo.Ticks);
 
                                     currentTempo = temposEnumerator.Current;
                                     tempos.Add(currentTempo);
                                     hasTempo = temposEnumerator.MoveNext();
                                 }
 
-                                AddNotes();
+                                AddNotes(endTicks);
 
                                 measures.Add(new Measure(startTicks,
                                                          endTicks,
