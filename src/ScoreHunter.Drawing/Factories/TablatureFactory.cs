@@ -25,6 +25,7 @@ namespace ScoreHunter.Drawing.Factories
                 using (var timeSignaturesEnumerator = track.TimeSignatures.GetEnumerator())
                 using (var temposEnumerator = track.Tempos.GetEnumerator())
                 using (var notesEnumerator = difficultyTrack.Notes.GetEnumerator())
+                using (var heroPowerPhrasesEnumerator = difficultyTrack.HeroPowerPhrases.GetEnumerator())
                 {
                     var hasTimeSignature = timeSignaturesEnumerator.MoveNext();
                     var hasTempo = temposEnumerator.MoveNext();
@@ -34,6 +35,7 @@ namespace ScoreHunter.Drawing.Factories
                         var startTicks = 0;
                         var tempos = new List<ITempo>(1);
                         var sustains = new List<DrawnSustain>();
+                        var heroPowerPhrases = new List<DrawnPhrase>();
 
                         var currentTimeSignature = timeSignaturesEnumerator.Current;
                         hasTimeSignature = timeSignaturesEnumerator.MoveNext();
@@ -43,6 +45,33 @@ namespace ScoreHunter.Drawing.Factories
                         hasTempo = temposEnumerator.MoveNext();
 
                         var hasNote = notesEnumerator.MoveNext();
+                        var hasHeroPowerPhrase = heroPowerPhrasesEnumerator.MoveNext();
+
+                        void AddHeroPowerPhrases(int heroPowerPhrasesEndTicks)
+                        {
+                            IPhrase heroPowerPhrase;
+                            int ticks;
+                            while (hasHeroPowerPhrase && (ticks = currentTempo.SecondsToTicks((heroPowerPhrase = heroPowerPhrasesEnumerator.Current).Start, track.TicksPerQuarterNote)) < heroPowerPhrasesEndTicks)
+                            {
+                                var phrase = new DrawnPhrase(heroPowerPhrase, ticks);
+                                heroPowerPhrases.Add(phrase);
+                                SetHeroPowerPhraseEndTicks(phrase);
+                                hasHeroPowerPhrase = heroPowerPhrasesEnumerator.MoveNext();
+                            }
+                        }
+
+                        void SetHeroPowerPhraseEndTicks(DrawnPhrase heroPowerPhrase)
+                        {
+                            int ticks;
+                            if (!hasTempo)
+                            {
+                                heroPowerPhrase.EndTicks = currentTempo.SecondsToTicks(heroPowerPhrase.End, track.TicksPerQuarterNote);
+                            }
+                            else if ((ticks = currentTempo.SecondsToTicks(heroPowerPhrase.End, track.TicksPerQuarterNote)) < temposEnumerator.Current.Ticks)
+                            {
+                                heroPowerPhrase.EndTicks = ticks;
+                            }
+                        }
 
                         while (hasNote || hasTempo || sustains.Count > 0)
                         {
@@ -88,7 +117,9 @@ namespace ScoreHunter.Drawing.Factories
 
                                 while (hasTempo && temposEnumerator.Current.Ticks < endTicks)
                                 {
-                                    AddNotes(temposEnumerator.Current.Ticks);
+                                    var tempoEndTicks = temposEnumerator.Current.Ticks;
+                                    AddNotes(tempoEndTicks);
+                                    AddHeroPowerPhrases(tempoEndTicks);
 
                                     currentTempo = temposEnumerator.Current;
                                     tempos.Add(currentTempo);
@@ -99,6 +130,14 @@ namespace ScoreHunter.Drawing.Factories
                                         if (sustain.EndTicks == -1)
                                         {
                                             SetSustainEndTicks(sustain);
+                                        }
+                                    }
+
+                                    foreach (var heroPowerPhrase in heroPowerPhrases)
+                                    {
+                                        if (heroPowerPhrase.EndTicks == -1)
+                                        {
+                                            SetHeroPowerPhraseEndTicks(heroPowerPhrase);
                                         }
                                     }
                                 }
@@ -122,7 +161,10 @@ namespace ScoreHunter.Drawing.Factories
                                 }
                             }
 
+                            AddHeroPowerPhrases(startTicks);
+
                             var nextSustains = new List<DrawnSustain>(sustains.Count);
+                            var nextHeroPowerPhrases = new List<DrawnPhrase>(heroPowerPhrases.Count);
 
                             foreach (var sustain in sustains)
                             {
@@ -133,16 +175,26 @@ namespace ScoreHunter.Drawing.Factories
                                 }
                             }
 
+                            foreach (var heroPowerPhrase in heroPowerPhrases)
+                            {
+                                if (heroPowerPhrase.EndTicks == -1 || heroPowerPhrase.EndTicks > startTicks)
+                                {
+                                    nextHeroPowerPhrases.Add(new DrawnPhrase(heroPowerPhrase, startTicks));
+                                    heroPowerPhrase.EndTicks = startTicks;
+                                }
+                            }
+
                             staves.Add(new Staff(staffStartTicks,
                                                  startTicks,
                                                  measures,
                                                  sustains,
+                                                 heroPowerPhrases,
                                                  // TODO: Add lists,
-                                                 Enumerable.Empty<IDrawnPhrase>(),
                                                  Enumerable.Empty<IDrawnPhrase>(),
                                                  Enumerable.Empty<IDrawnActivation>()));
 
                             sustains = nextSustains;
+                            heroPowerPhrases = nextHeroPowerPhrases;
                         }
                     }
                 }

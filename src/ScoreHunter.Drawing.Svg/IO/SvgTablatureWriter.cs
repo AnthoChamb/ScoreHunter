@@ -390,6 +390,21 @@ namespace ScoreHunter.Drawing.Svg.IO
                     }
                 }
 
+                foreach (var heroPowerPhrase in staff.HeroPowerPhrases)
+                {
+                    var heroPowerPhraseX = StaffPaddingX + TicksToPixels(heroPowerPhrase.StartTicks - staff.StartTicks);
+                    var heroPowerPhraseWidth = TicksToPixels(heroPowerPhrase.EndTicks - heroPowerPhrase.StartTicks);
+
+                    _writer.WriteStartElement(null, "rect", null);
+                    _writer.WriteAttributeString(null, "x", null, heroPowerPhraseX.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "width", null, heroPowerPhraseWidth.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "fill", null, "green");
+                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteEndElement();
+                }
+
                 staffY += StaffHeight + StaffPaddingY;
             }
 
