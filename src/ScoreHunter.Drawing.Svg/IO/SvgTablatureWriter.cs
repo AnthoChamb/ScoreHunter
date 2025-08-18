@@ -420,6 +420,21 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteEndElement();
                 }
 
+                foreach (var activation in staff.Activations)
+                {
+                    var activationX = StaffPaddingX + TicksToPixels(activation.StartTicks - staff.StartTicks);
+                    var activationWidth = TicksToPixels(activation.EndTicks - activation.StartTicks);
+
+                    _writer.WriteStartElement(null, "rect", null);
+                    _writer.WriteAttributeString(null, "x", null, activationX.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "width", null, activationWidth.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "fill", null, "blue");
+                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteEndElement();
+                }
+
                 staffY += StaffHeight + StaffPaddingY;
             }
 
