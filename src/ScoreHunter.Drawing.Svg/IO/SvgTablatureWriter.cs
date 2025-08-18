@@ -319,7 +319,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                                 _writer.WriteAttributeString(null, "cy", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
                                 _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
                                 _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
+                                _writer.WriteAttributeString(null, "fill", null, "white");
                                 _writer.WriteAttributeString(null, "stroke-width", null, "1");
                                 _writer.WriteEndElement();
                                 break;
