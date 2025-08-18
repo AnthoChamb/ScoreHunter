@@ -405,6 +405,21 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteEndElement();
                 }
 
+                foreach (var highwayPhrase in staff.HighwayPhrases)
+                {
+                    var highwayPhraseX = StaffPaddingX + TicksToPixels(highwayPhrase.StartTicks - staff.StartTicks);
+                    var highwayPhraseWidth = TicksToPixels(highwayPhrase.EndTicks - highwayPhrase.StartTicks);
+
+                    _writer.WriteStartElement(null, "rect", null);
+                    _writer.WriteAttributeString(null, "x", null, highwayPhraseX.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "width", null, highwayPhraseWidth.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteAttributeString(null, "fill", null, "yellow");
+                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteEndElement();
+                }
+
                 staffY += StaffHeight + StaffPaddingY;
             }
 

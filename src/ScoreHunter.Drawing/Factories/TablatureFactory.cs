@@ -26,6 +26,7 @@ namespace ScoreHunter.Drawing.Factories
                 using (var temposEnumerator = track.Tempos.GetEnumerator())
                 using (var notesEnumerator = difficultyTrack.Notes.GetEnumerator())
                 using (var heroPowerPhrasesEnumerator = difficultyTrack.HeroPowerPhrases.GetEnumerator())
+                using (var highwayPhrasesEnumerator = track.HighwayPhrases.GetEnumerator())
                 {
                     var hasTimeSignature = timeSignaturesEnumerator.MoveNext();
                     var hasTempo = temposEnumerator.MoveNext();
@@ -36,6 +37,7 @@ namespace ScoreHunter.Drawing.Factories
                         var tempos = new List<ITempo>(1);
                         var sustains = new List<DrawnSustain>();
                         var heroPowerPhrases = new List<DrawnPhrase>();
+                        var highwayPhrases = new List<DrawnPhrase>();
 
                         var currentTimeSignature = timeSignaturesEnumerator.Current;
                         hasTimeSignature = timeSignaturesEnumerator.MoveNext();
@@ -46,6 +48,7 @@ namespace ScoreHunter.Drawing.Factories
 
                         var hasNote = notesEnumerator.MoveNext();
                         var hasHeroPowerPhrase = heroPowerPhrasesEnumerator.MoveNext();
+                        var hasHighwayPhrase = highwayPhrasesEnumerator.MoveNext();
 
                         void AddHeroPowerPhrases(int heroPowerPhrasesEndTicks)
                         {
@@ -70,6 +73,32 @@ namespace ScoreHunter.Drawing.Factories
                             else if ((ticks = currentTempo.SecondsToTicks(heroPowerPhrase.End, track.TicksPerQuarterNote)) < temposEnumerator.Current.Ticks)
                             {
                                 heroPowerPhrase.EndTicks = ticks;
+                            }
+                        }
+
+                        void AddHighwayPhrases(int highwayPhrasesEndTicks)
+                        {
+                            IPhrase highwayPhrase;
+                            int ticks;
+                            while (hasHighwayPhrase && (ticks = currentTempo.SecondsToTicks((highwayPhrase = highwayPhrasesEnumerator.Current).Start, track.TicksPerQuarterNote)) < highwayPhrasesEndTicks)
+                            {
+                                var phrase = new DrawnPhrase(highwayPhrase, ticks);
+                                highwayPhrases.Add(phrase);
+                                SetHighwayPhraseEndTicks(phrase);
+                                hasHighwayPhrase = highwayPhrasesEnumerator.MoveNext();
+                            }
+                        }
+
+                        void SetHighwayPhraseEndTicks(DrawnPhrase highwayPhrase)
+                        {
+                            int ticks;
+                            if (!hasTempo)
+                            {
+                                highwayPhrase.EndTicks = currentTempo.SecondsToTicks(highwayPhrase.End, track.TicksPerQuarterNote);
+                            }
+                            else if ((ticks = currentTempo.SecondsToTicks(highwayPhrase.End, track.TicksPerQuarterNote)) < temposEnumerator.Current.Ticks)
+                            {
+                                highwayPhrase.EndTicks = ticks;
                             }
                         }
 
@@ -120,6 +149,7 @@ namespace ScoreHunter.Drawing.Factories
                                     var tempoEndTicks = temposEnumerator.Current.Ticks;
                                     AddNotes(tempoEndTicks);
                                     AddHeroPowerPhrases(tempoEndTicks);
+                                    AddHighwayPhrases(tempoEndTicks);
 
                                     currentTempo = temposEnumerator.Current;
                                     tempos.Add(currentTempo);
@@ -138,6 +168,14 @@ namespace ScoreHunter.Drawing.Factories
                                         if (heroPowerPhrase.EndTicks == -1)
                                         {
                                             SetHeroPowerPhraseEndTicks(heroPowerPhrase);
+                                        }
+                                    }
+
+                                    foreach (var highwayPhrase in highwayPhrases)
+                                    {
+                                        if (highwayPhrase.EndTicks == -1)
+                                        {
+                                            SetHighwayPhraseEndTicks(highwayPhrase);
                                         }
                                     }
                                 }
@@ -162,9 +200,11 @@ namespace ScoreHunter.Drawing.Factories
                             }
 
                             AddHeroPowerPhrases(startTicks);
+                            AddHighwayPhrases(startTicks);
 
                             var nextSustains = new List<DrawnSustain>(sustains.Count);
                             var nextHeroPowerPhrases = new List<DrawnPhrase>(heroPowerPhrases.Count);
+                            var nextHighwayPhrases = new List<DrawnPhrase>(highwayPhrases.Count);
 
                             foreach (var sustain in sustains)
                             {
@@ -184,17 +224,27 @@ namespace ScoreHunter.Drawing.Factories
                                 }
                             }
 
+                            foreach (var highwayPhrase in highwayPhrases)
+                            {
+                                if (highwayPhrase.EndTicks == -1 || highwayPhrase.EndTicks > startTicks)
+                                {
+                                    nextHighwayPhrases.Add(new DrawnPhrase(highwayPhrase, startTicks));
+                                    highwayPhrase.EndTicks = startTicks;
+                                }
+                            }
+
                             staves.Add(new Staff(staffStartTicks,
                                                  startTicks,
                                                  measures,
                                                  sustains,
                                                  heroPowerPhrases,
-                                                 // TODO: Add lists,
-                                                 Enumerable.Empty<IDrawnPhrase>(),
+                                                 highwayPhrases,
+                                                 // TODO: Add list,
                                                  Enumerable.Empty<IDrawnActivation>()));
 
                             sustains = nextSustains;
                             heroPowerPhrases = nextHeroPowerPhrases;
+                            highwayPhrases = nextHighwayPhrases;
                         }
                     }
                 }
