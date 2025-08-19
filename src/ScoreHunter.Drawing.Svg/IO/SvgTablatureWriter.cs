@@ -62,6 +62,38 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteAttributeString(null, "width", null, (StaffPaddingX * 2 + TicksToPixels(tablature.TicksPerStaff)).ToString(CultureInfo.InvariantCulture));
             _writer.WriteAttributeString(null, "height", null, (StaffPaddingY * 2 + ((StaffHeight + StaffPaddingY) * tablature.Staves.Count())).ToString(CultureInfo.InvariantCulture));
 
+            _writer.WriteStartElement("defs");
+
+            _writer.WriteStartElement("circle");
+            _writer.WriteAttributeString("id", "n");
+            _writer.WriteAttributeDoubleInvariant("r", NoteSize / 2);
+            _writer.WriteAttributeString("stroke", "black");
+            _writer.WriteAttributeDoubleInvariant("stroke-width", 1);
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElement("use");
+            _writer.WriteAttributeString("id", "b");
+            _writer.WriteAttributeString("href", "#n");
+            _writer.WriteAttributeString("fill", "black");
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElement("use");
+            _writer.WriteAttributeString("id", "w");
+            _writer.WriteAttributeString("href", "#n");
+            _writer.WriteAttributeString("fill", "white");
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElement("rect");
+            _writer.WriteAttributeString("id", "o");
+            _writer.WriteAttributeDoubleInvariant("width", NoteSize / 2);
+            _writer.WriteAttributeDoubleInvariant("height", StaffHeight + NoteSize);
+            _writer.WriteAttributeString("stroke", "black");
+            _writer.WriteAttributeString("fill", "white");
+            _writer.WriteAttributeDoubleInvariant("stroke-width", 1);
+            _writer.WriteEndElement();
+
+            _writer.WriteEndElement();
+
             ITimeSignature currentTimeSignature = null;
             var measureCount = 0;
             var staffY = StaffPaddingY;
@@ -237,74 +269,52 @@ namespace ScoreHunter.Drawing.Svg.IO
                         switch (note.Frets.Flags)
                         {
                             case FretFlags.Open:
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 4).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, (StaffHeight + NoteSize).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX - NoteSize / 4);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY - NoteSize / 2);
+                                _writer.WriteAttributeString("href", "#o");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black1:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, staffY.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY);
+                                _writer.WriteAttributeString("href", "#b");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black2:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY + StaffHeight / 2);
+                                _writer.WriteAttributeString("href", "#b");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black3:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY + StaffHeight);
+                                _writer.WriteAttributeString("href", "#b");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White1:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, staffY.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY);
+                                _writer.WriteAttributeString("href", "#w");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White2:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY + StaffHeight / 2);
+                                _writer.WriteAttributeString("href", "#w");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White3:
-                                _writer.WriteStartElement(null, "circle", null);
-                                _writer.WriteAttributeString(null, "cx", null, noteX.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "cy", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "r", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElement("use");
+                                _writer.WriteAttributeDoubleInvariant("x", noteX);
+                                _writer.WriteAttributeDoubleInvariant("y", staffY + StaffHeight);
+                                _writer.WriteAttributeString("href", "#w");
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black1 | FretFlags.White1:
