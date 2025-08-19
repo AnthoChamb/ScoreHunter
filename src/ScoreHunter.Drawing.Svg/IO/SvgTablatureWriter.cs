@@ -2,6 +2,7 @@
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces.IO;
+using ScoreHunter.Drawing.Svg.Extensions;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -169,47 +170,30 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var sustainX = StaffPaddingX + TicksToPixels(sustain.StartTicks - staff.StartTicks);
                     var sustainWidth = TicksToPixels(sustain.EndTicks - sustain.StartTicks);
 
+                    void WriteSustain(double y)
+                    {
+                        _writer.WriteStartElementRect(sustainX, y, sustainWidth, SustainHeight);
+                        _writer.WriteAttributeString("fill", "gray");
+                        _writer.WriteEndElement();
+                    }
+
                     switch (sustain.Frets.Flags)
                     {
                         case FretFlags.Black1:
                         case FretFlags.White1:
                         case FretFlags.Black1 | FretFlags.White1:
-                            _writer.WriteStartElement(null, "rect", null);
-                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "y", null, (staffY - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "stroke", null, "gray");
-                            _writer.WriteAttributeString(null, "fill", null, "gray");
-                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                            _writer.WriteEndElement();
+                            WriteSustain(staffY - SustainHeight / 2);
                             break;
                         case FretFlags.Open:
                         case FretFlags.Black2:
                         case FretFlags.White2:
                         case FretFlags.Black2 | FretFlags.White2:
-                            _writer.WriteStartElement(null, "rect", null);
-                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "stroke", null, "gray");
-                            _writer.WriteAttributeString(null, "fill", null, "gray");
-                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                            _writer.WriteEndElement();
+                            WriteSustain(staffY + StaffHeight / 2 - SustainHeight / 2);
                             break;
                         case FretFlags.Black3:
                         case FretFlags.White3:
                         case FretFlags.Black3 | FretFlags.White3:
-                            _writer.WriteStartElement(null, "rect", null);
-                            _writer.WriteAttributeString(null, "x", null, sustainX.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - SustainHeight / 2).ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "width", null, sustainWidth.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "height", null, SustainHeight.ToString(CultureInfo.InvariantCulture));
-                            _writer.WriteAttributeString(null, "stroke", null, "gray");
-                            _writer.WriteAttributeString(null, "fill", null, "gray");
-                            _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                            _writer.WriteEndElement();
+                            WriteSustain(staffY + StaffHeight - SustainHeight / 2);
                             break;
                     }
                 }
