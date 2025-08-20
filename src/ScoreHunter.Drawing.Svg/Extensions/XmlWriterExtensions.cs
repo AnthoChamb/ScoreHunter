@@ -19,5 +19,18 @@ namespace ScoreHunter.Drawing.Svg.Extensions
             writer.WriteAttributeDouble("width", width);
             writer.WriteAttributeDouble("height", height);
         }
+
+        public static void WriteStartElementUse(this XmlWriter writer, string href)
+        {
+            writer.WriteStartElement("use");
+            writer.WriteAttributeString("href", href);
+        }
+
+        public static void WriteStartElementUse(this XmlWriter writer, string href, double x, double y)
+        {
+            writer.WriteStartElementUse(href);
+            writer.WriteAttributeDouble("x", x);
+            writer.WriteAttributeDouble("y", y);
+        }
     }
 }

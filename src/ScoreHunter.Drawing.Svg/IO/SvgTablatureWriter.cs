@@ -78,15 +78,13 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteAttributeDouble("stroke-width", 1);
             _writer.WriteEndElement();
 
-            _writer.WriteStartElement("use");
+            _writer.WriteStartElementUse("#n");
             _writer.WriteAttributeString("id", "b");
-            _writer.WriteAttributeString("href", "#n");
             _writer.WriteAttributeString("fill", "black");
             _writer.WriteEndElement();
 
-            _writer.WriteStartElement("use");
+            _writer.WriteStartElementUse("#n");
             _writer.WriteAttributeString("id", "w");
-            _writer.WriteAttributeString("href", "#n");
             _writer.WriteAttributeString("fill", "white");
             _writer.WriteEndElement();
 
@@ -272,52 +270,31 @@ namespace ScoreHunter.Drawing.Svg.IO
                         switch (note.Frets.Flags)
                         {
                             case FretFlags.Open:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX - NoteSize / 4);
-                                _writer.WriteAttributeDouble("y", staffY - NoteSize / 2);
-                                _writer.WriteAttributeString("href", "#o");
+                                _writer.WriteStartElementUse("#o", noteX - NoteSize / 4, staffY - NoteSize / 2);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black1:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY);
-                                _writer.WriteAttributeString("href", "#b");
+                                _writer.WriteStartElementUse("#b", noteX, staffY);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black2:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY + StaffHeight / 2);
-                                _writer.WriteAttributeString("href", "#b");
+                                _writer.WriteStartElementUse("#b", noteX, staffY + StaffHeight / 2);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black3:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY + StaffHeight);
-                                _writer.WriteAttributeString("href", "#b");
+                                _writer.WriteStartElementUse("#b", noteX, staffY + StaffHeight);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White1:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY);
-                                _writer.WriteAttributeString("href", "#w");
+                                _writer.WriteStartElementUse("#w", noteX, staffY);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White2:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY + StaffHeight / 2);
-                                _writer.WriteAttributeString("href", "#w");
+                                _writer.WriteStartElementUse("#w", noteX, staffY + StaffHeight / 2);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.White3:
-                                _writer.WriteStartElement("use");
-                                _writer.WriteAttributeDouble("x", noteX);
-                                _writer.WriteAttributeDouble("y", staffY + StaffHeight);
-                                _writer.WriteAttributeString("href", "#w");
+                                _writer.WriteStartElementUse("#w", noteX, staffY + StaffHeight);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black1 | FretFlags.White1:
