@@ -62,6 +62,13 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteAttributeString(null, "width", null, (StaffPaddingX * 2 + TicksToPixels(tablature.TicksPerStaff)).ToString(CultureInfo.InvariantCulture));
             _writer.WriteAttributeString(null, "height", null, (StaffPaddingY * 2 + ((StaffHeight + StaffPaddingY) * tablature.Staves.Count())).ToString(CultureInfo.InvariantCulture));
 
+            _writer.WriteStartElement("style");
+            _writer.WriteString("text { font-family: sans-serif; }");
+            _writer.WriteString(".g { fill: green; opacity: 0.3; }");
+            _writer.WriteString(".y { fill: yellow; opacity: 0.3; }");
+            _writer.WriteString(".b { fill: blue; opacity: 0.3; }");
+            _writer.WriteEndElement();
+
             _writer.WriteStartElement("defs");
 
             _writer.WriteStartElement("circle");
@@ -162,7 +169,6 @@ namespace ScoreHunter.Drawing.Svg.IO
                         _writer.WriteStartElement(null, "text", null);
                         _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
                         _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "fill", null, "gray");
 
@@ -173,7 +179,6 @@ namespace ScoreHunter.Drawing.Svg.IO
                         _writer.WriteStartElement(null, "text", null);
                         _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
                         _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "fill", null, "gray");
 
@@ -238,7 +243,6 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteStartElement(null, "text", null);
                     _writer.WriteAttributeString(null, "x", null, measureX.ToString(CultureInfo.InvariantCulture));
                     _writer.WriteAttributeString(null, "y", null, measureCountY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
                     _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
                     _writer.WriteAttributeString(null, "fill", null, "red");
 
@@ -253,7 +257,6 @@ namespace ScoreHunter.Drawing.Svg.IO
                         _writer.WriteStartElement(null, "text", null);
                         _writer.WriteAttributeString(null, "x", null, tempoX.ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "y", null, tempoY.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-family", null, "sans-serif");
                         _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
                         _writer.WriteAttributeString(null, "fill", null, "gray");
 
@@ -389,13 +392,8 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var heroPowerPhraseX = StaffPaddingX + TicksToPixels(heroPowerPhrase.StartTicks - staff.StartTicks);
                     var heroPowerPhraseWidth = TicksToPixels(heroPowerPhrase.EndTicks - heroPowerPhrase.StartTicks);
 
-                    _writer.WriteStartElement(null, "rect", null);
-                    _writer.WriteAttributeString(null, "x", null, heroPowerPhraseX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "width", null, heroPowerPhraseWidth.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "fill", null, "green");
-                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteStartElementRect(heroPowerPhraseX, staffY, heroPowerPhraseWidth, StaffHeight);
+                    _writer.WriteAttributeString("class", "g");
                     _writer.WriteEndElement();
                 }
 
@@ -404,13 +402,8 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var highwayPhraseX = StaffPaddingX + TicksToPixels(highwayPhrase.StartTicks - staff.StartTicks);
                     var highwayPhraseWidth = TicksToPixels(highwayPhrase.EndTicks - highwayPhrase.StartTicks);
 
-                    _writer.WriteStartElement(null, "rect", null);
-                    _writer.WriteAttributeString(null, "x", null, highwayPhraseX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "width", null, highwayPhraseWidth.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "fill", null, "yellow");
-                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteStartElementRect(highwayPhraseX, staffY, highwayPhraseWidth, StaffHeight);
+                    _writer.WriteAttributeString("class", "y");
                     _writer.WriteEndElement();
                 }
 
@@ -419,13 +412,8 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var activationX = StaffPaddingX + TicksToPixels(activation.StartTicks - staff.StartTicks);
                     var activationWidth = TicksToPixels(activation.EndTicks - activation.StartTicks);
 
-                    _writer.WriteStartElement(null, "rect", null);
-                    _writer.WriteAttributeString(null, "x", null, activationX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "width", null, activationWidth.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "height", null, StaffHeight.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "fill", null, "blue");
-                    _writer.WriteAttributeString(null, "opacity", null, "0.3");
+                    _writer.WriteStartElementRect(activationX, staffY, activationWidth, StaffHeight);
+                    _writer.WriteAttributeString("class", "b");
                     _writer.WriteEndElement();
                 }
 
