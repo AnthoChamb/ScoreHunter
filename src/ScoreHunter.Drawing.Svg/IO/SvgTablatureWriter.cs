@@ -69,8 +69,9 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteString(".s { stroke: black; }");
             _writer.WriteString(".w { stroke: gray; }");
             _writer.WriteString(".m, .t { font-size: " + XmlConvert.ToString(TextFontSize) + "px; }");
+            _writer.WriteString(".n { font-size: " + XmlConvert.ToString(StaffHeight / 2) + "px; }");
             _writer.WriteString(".m { fill: red; }");
-            _writer.WriteString(".t, .l { fill: gray; }");
+            _writer.WriteString(".t, .n, .l { fill: gray; }");
             _writer.WriteString(".g, .y, .b { opacity: 0.3; }");
             _writer.WriteString(".g { fill: green; }");
             _writer.WriteString(".y { fill: yellow; }");
@@ -153,23 +154,20 @@ namespace ScoreHunter.Drawing.Svg.IO
                         currentTimeSignature = measure.TimeSignature;
                         var timeSignatureX = measureX + TicksToPixels(currentTimeSignature.Ticks - measure.StartTicks) + TextFontSize;
 
-                        _writer.WriteStartElement(null, "text", null);
-                        _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "fill", null, "gray");
+                        _writer.WriteStartElement("text");
+                        _writer.WriteAttributeDouble("x", timeSignatureX);
+                        _writer.WriteAttributeDouble("y", staffY + StaffHeight / 2 - TextPaddingY / 2);
+                        _writer.WriteAttributeString("class", "n");
 
-                        _writer.WriteString(currentTimeSignature.Numerator.ToString());
+                        _writer.WriteValue(currentTimeSignature.Numerator);
 
                         _writer.WriteEndElement();
+                        _writer.WriteStartElement("text");
+                        _writer.WriteAttributeDouble("x", timeSignatureX);
+                        _writer.WriteAttributeDouble("y", staffY + StaffHeight - TextPaddingY / 2);
+                        _writer.WriteAttributeString("class", "n");
 
-                        _writer.WriteStartElement(null, "text", null);
-                        _writer.WriteAttributeString(null, "x", null, timeSignatureX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - TextPaddingY / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-size", null, (StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "fill", null, "gray");
-
-                        _writer.WriteString(currentTimeSignature.Denominator.ToString());
+                        _writer.WriteValue(currentTimeSignature.Denominator);
 
                         _writer.WriteEndElement();
                     }
@@ -237,7 +235,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                     _writer.WriteAttributeDouble("y", measureCountY);
                     _writer.WriteAttributeString("class", "m");
 
-                    _writer.WriteString(measureCount.ToString());
+                    _writer.WriteValue(measureCount);
 
                     _writer.WriteEndElement();
 
