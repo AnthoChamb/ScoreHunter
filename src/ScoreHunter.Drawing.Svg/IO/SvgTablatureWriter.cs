@@ -68,7 +68,9 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteString(".s, .w { stroke-width: 1px; fill: transparent; }");
             _writer.WriteString(".s { stroke: black; }");
             _writer.WriteString(".w { stroke: gray; }");
-            _writer.WriteString(".l { fill: gray; }");
+            _writer.WriteString(".m, .t { font-size: " + XmlConvert.ToString(TextFontSize) + "px; }");
+            _writer.WriteString(".m { fill: red; }");
+            _writer.WriteString(".t, .l { fill: gray; }");
             _writer.WriteString(".g, .y, .b { opacity: 0.3; }");
             _writer.WriteString(".g { fill: green; }");
             _writer.WriteString(".y { fill: yellow; }");
@@ -230,11 +232,10 @@ namespace ScoreHunter.Drawing.Svg.IO
                     measureCount++;
                     var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
 
-                    _writer.WriteStartElement(null, "text", null);
-                    _writer.WriteAttributeString(null, "x", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y", null, measureCountY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "fill", null, "red");
+                    _writer.WriteStartElement("text");
+                    _writer.WriteAttributeDouble("x", measureX);
+                    _writer.WriteAttributeDouble("y", measureCountY);
+                    _writer.WriteAttributeString("class", "m");
 
                     _writer.WriteString(measureCount.ToString());
 
@@ -244,11 +245,10 @@ namespace ScoreHunter.Drawing.Svg.IO
                     {
                         var tempoX = measureX + TicksToPixels(tempo.Ticks - measure.StartTicks);
 
-                        _writer.WriteStartElement(null, "text", null);
-                        _writer.WriteAttributeString(null, "x", null, tempoX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y", null, tempoY.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "font-size", null, TextFontSize.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "fill", null, "gray");
+                        _writer.WriteStartElement("text");
+                        _writer.WriteAttributeDouble("x", tempoX);
+                        _writer.WriteAttributeDouble("y", tempoY);
+                        _writer.WriteAttributeString("class", "t");
 
                         _writer.WriteString("\u2669=" + Math.Round(tempo.BeatsPerMinute));
 
