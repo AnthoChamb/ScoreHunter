@@ -27,6 +27,7 @@ namespace ScoreHunter.Drawing.Svg.IO
 
         private readonly bool _leaveOpen;
         private bool _disposed;
+        private bool _inPathCommand;
 
         public SvgTablatureWriter(XmlWriter writer) : this(writer, false)
         {
@@ -64,9 +65,14 @@ namespace ScoreHunter.Drawing.Svg.IO
 
             _writer.WriteStartElement("style");
             _writer.WriteString("text { font-family: sans-serif; }");
-            _writer.WriteString(".g { fill: green; opacity: 0.3; }");
-            _writer.WriteString(".y { fill: yellow; opacity: 0.3; }");
-            _writer.WriteString(".b { fill: blue; opacity: 0.3; }");
+            _writer.WriteString(".s, .w { stroke-width: 1px; fill: transparent; }");
+            _writer.WriteString(".s { stroke: black; }");
+            _writer.WriteString(".w { stroke: gray; }");
+            _writer.WriteString(".l { fill: gray; }");
+            _writer.WriteString(".g, .y, .b { opacity: 0.3; }");
+            _writer.WriteString(".g { fill: green; }");
+            _writer.WriteString(".y { fill: yellow; }");
+            _writer.WriteString(".b { fill: blue; }");
             _writer.WriteEndElement();
 
             _writer.WriteStartElement("defs");
@@ -105,44 +111,26 @@ namespace ScoreHunter.Drawing.Svg.IO
 
             foreach (var staff in tablature.Staves)
             {
-                var staffX2 = StaffPaddingX + TicksToPixels(staff.EndTicks - staff.StartTicks);
+                var staffWidth = TicksToPixels(staff.EndTicks - staff.StartTicks);
                 var measureCountY = staffY - (NoteSize / 2 + TextPaddingY);
                 var tempoY = measureCountY - (TextFontSize + TextPaddingY);
 
-                _writer.WriteStartElement(null, "line", null);
-                _writer.WriteAttributeString(null, "x1", null, StaffPaddingX.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "x2", null, staffX2.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y2", null, staffY.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "stroke", null, "black");
-                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                _writer.WriteStartElement("path");
+                WriteStartAttributePathCommand();
+                WriteMoveTo(StaffPaddingX, staffY);
+                WriteHorizontalLineToRelative(staffWidth);
+                WriteVerticalLineToRelative(StaffHeight);
+                WriteHorizontalLineToRelative(-staffWidth);
+                WriteEndAttributePathCommand();
+                _writer.WriteAttributeString("class", "s");
                 _writer.WriteEndElement();
 
-                _writer.WriteStartElement(null, "line", null);
-                _writer.WriteAttributeString(null, "x1", null, StaffPaddingX.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "x2", null, staffX2.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y1", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "stroke", null, "gray");
-                _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                _writer.WriteEndElement();
-
-                _writer.WriteStartElement(null, "line", null);
-                _writer.WriteAttributeString(null, "x1", null, StaffPaddingX.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "x2", null, staffX2.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y1", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "stroke", null, "black");
-                _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                _writer.WriteEndElement();
-
-                _writer.WriteStartElement(null, "line", null);
-                _writer.WriteAttributeString(null, "x1", null, staffX2.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "x2", null, staffX2.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                _writer.WriteAttributeString(null, "stroke", null, "black");
-                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                _writer.WriteStartElement("path");
+                WriteStartAttributePathCommand();
+                WriteMoveTo(StaffPaddingX, staffY + StaffHeight / 2);
+                WriteHorizontalLineToRelative(staffWidth);
+                WriteEndAttributePathCommand();
+                _writer.WriteAttributeString("class", "w");
                 _writer.WriteEndElement();
 
 
@@ -150,13 +138,12 @@ namespace ScoreHunter.Drawing.Svg.IO
                 {
                     var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
 
-                    _writer.WriteStartElement(null, "line", null);
-                    _writer.WriteAttributeString(null, "x1", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "x2", null, measureX.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                    _writer.WriteAttributeString(null, "stroke", null, "black");
-                    _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                    _writer.WriteStartElement("path");
+                    WriteStartAttributePathCommand();
+                    WriteMoveTo(measureX, staffY);
+                    WriteVerticalLineToRelative(StaffHeight);
+                    WriteEndAttributePathCommand();
+                    _writer.WriteAttributeString("class", "s");
                     _writer.WriteEndElement();
 
                     if (measure.TimeSignature != currentTimeSignature)
@@ -189,13 +176,12 @@ namespace ScoreHunter.Drawing.Svg.IO
                     {
                         var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
 
-                        _writer.WriteStartElement(null, "line", null);
-                        _writer.WriteAttributeString(null, "x1", null, beatX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "x2", null, beatX.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y1", null, staffY.ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "y2", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                        _writer.WriteAttributeString(null, "stroke", null, "gray");
-                        _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                        _writer.WriteStartElement("path");
+                        WriteStartAttributePathCommand();
+                        WriteMoveTo(beatX, staffY);
+                        WriteVerticalLineToRelative(StaffHeight);
+                        WriteEndAttributePathCommand();
+                        _writer.WriteAttributeString("class", "w");
                         _writer.WriteEndElement();
                     }
                 }
@@ -207,8 +193,14 @@ namespace ScoreHunter.Drawing.Svg.IO
 
                     void WriteSustain(double y)
                     {
-                        _writer.WriteStartElementRect(sustainX, y, sustainWidth, SustainHeight);
-                        _writer.WriteAttributeString("fill", "gray");
+                        _writer.WriteStartElement("path");
+                        WriteStartAttributePathCommand();
+                        WriteMoveTo(sustainX, y);
+                        WriteHorizontalLineToRelative(sustainWidth);
+                        WriteVerticalLineToRelative(SustainHeight);
+                        WriteHorizontalLineToRelative(-sustainWidth);
+                        WriteEndAttributePathCommand();
+                        _writer.WriteAttributeString("class", "l");
                         _writer.WriteEndElement();
                     }
 
@@ -369,7 +361,14 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var heroPowerPhraseX = StaffPaddingX + TicksToPixels(heroPowerPhrase.StartTicks - staff.StartTicks);
                     var heroPowerPhraseWidth = TicksToPixels(heroPowerPhrase.EndTicks - heroPowerPhrase.StartTicks);
 
-                    _writer.WriteStartElementRect(heroPowerPhraseX, staffY, heroPowerPhraseWidth, StaffHeight);
+                    _writer.WriteStartElement("path");
+                    WriteStartAttributePathCommand();
+                    WriteMoveTo(heroPowerPhraseX, staffY);
+                    WriteHorizontalLineToRelative(heroPowerPhraseWidth);
+                    WriteVerticalLineToRelative(StaffHeight);
+                    WriteHorizontalLineToRelative(-heroPowerPhraseWidth);
+                    WriteClosePath();
+                    WriteEndAttributePathCommand();
                     _writer.WriteAttributeString("class", "g");
                     _writer.WriteEndElement();
                 }
@@ -379,7 +378,14 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var highwayPhraseX = StaffPaddingX + TicksToPixels(highwayPhrase.StartTicks - staff.StartTicks);
                     var highwayPhraseWidth = TicksToPixels(highwayPhrase.EndTicks - highwayPhrase.StartTicks);
 
-                    _writer.WriteStartElementRect(highwayPhraseX, staffY, highwayPhraseWidth, StaffHeight);
+                    _writer.WriteStartElement("path");
+                    WriteStartAttributePathCommand();
+                    WriteMoveTo(highwayPhraseX, staffY);
+                    WriteHorizontalLineToRelative(highwayPhraseWidth);
+                    WriteVerticalLineToRelative(StaffHeight);
+                    WriteHorizontalLineToRelative(-highwayPhraseWidth);
+                    WriteClosePath();
+                    WriteEndAttributePathCommand();
                     _writer.WriteAttributeString("class", "y");
                     _writer.WriteEndElement();
                 }
@@ -389,7 +395,14 @@ namespace ScoreHunter.Drawing.Svg.IO
                     var activationX = StaffPaddingX + TicksToPixels(activation.StartTicks - staff.StartTicks);
                     var activationWidth = TicksToPixels(activation.EndTicks - activation.StartTicks);
 
-                    _writer.WriteStartElementRect(activationX, staffY, activationWidth, StaffHeight);
+                    _writer.WriteStartElement("path");
+                    WriteStartAttributePathCommand();
+                    WriteMoveTo(activationX, staffY);
+                    WriteHorizontalLineToRelative(activationWidth);
+                    WriteVerticalLineToRelative(StaffHeight);
+                    WriteHorizontalLineToRelative(-activationWidth);
+                    WriteClosePath();
+                    WriteEndAttributePathCommand();
                     _writer.WriteAttributeString("class", "b");
                     _writer.WriteEndElement();
                 }
@@ -404,6 +417,57 @@ namespace ScoreHunter.Drawing.Svg.IO
         {
             Write(tablature);
             return Task.CompletedTask;
+        }
+
+        private void WriteStartAttributePathCommand()
+        {
+            _writer.WriteStartAttribute("d");
+        }
+
+        private void WritePathCommand(string command)
+        {
+            if (_inPathCommand)
+            {
+                _writer.WriteString(" ");
+            }
+            _writer.WriteString(command);
+            _inPathCommand = true;
+        }
+
+        private void WritePathCommandParameter(double value)
+        {
+            _writer.WriteString(" ");
+            _writer.WriteValue(value);
+        }
+
+        private void WriteMoveTo(double x, double y)
+        {
+            WritePathCommand("M");
+            WritePathCommandParameter(x);
+            WritePathCommandParameter(y);
+        }
+
+        private void WriteHorizontalLineToRelative(double dx)
+        {
+            WritePathCommand("h");
+            WritePathCommandParameter(dx);
+        }
+
+        private void WriteVerticalLineToRelative(double dy)
+        {
+            WritePathCommand("v");
+            WritePathCommandParameter(dy);
+        }
+
+        private void WriteClosePath()
+        {
+            WritePathCommand("Z");
+        }
+
+        private void WriteEndAttributePathCommand()
+        {
+            _writer.WriteEndAttribute();
+            _inPathCommand = false;
         }
 
         private double TicksToPixels(int ticks, int ticksPerQuarterNote)
