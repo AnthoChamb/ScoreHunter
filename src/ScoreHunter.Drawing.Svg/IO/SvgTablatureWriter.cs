@@ -65,7 +65,7 @@ namespace ScoreHunter.Drawing.Svg.IO
 
             _writer.WriteStartElement("style");
             _writer.WriteString("text { font-family: sans-serif; }");
-            _writer.WriteString(".s, .w { stroke-width: 1px; fill: transparent; }");
+            _writer.WriteString(".s, .w { fill: transparent; stroke-width: 1px; }");
             _writer.WriteString(".s { stroke: black; }");
             _writer.WriteString(".w { stroke: gray; }");
             _writer.WriteString(".m, .t { font-size: " + XmlConvert.ToString(TextFontSize) + "px; }");
@@ -79,6 +79,25 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
 
             _writer.WriteStartElement("defs");
+
+            _writer.WriteStartElement("path");
+            _writer.WriteAttributeString("id", "h");
+            WriteStartAttributePathCommand();
+            WriteMoveTo(0, 0);
+            WriteVerticalLineToRelative(StaffHeight);
+            WriteEndAttributePathCommand();
+            _writer.WriteAttributeDouble("stroke-width", 1);
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElementUse("#h");
+            _writer.WriteAttributeString("id", "s");
+            _writer.WriteAttributeString("stroke", "black");
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElementUse("#h");
+            _writer.WriteAttributeString("id", "l");
+            _writer.WriteAttributeString("stroke", "gray");
+            _writer.WriteEndElement();
 
             _writer.WriteStartElement("circle");
             _writer.WriteAttributeString("id", "n");
@@ -141,12 +160,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                 {
                     var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
 
-                    _writer.WriteStartElement("path");
-                    WriteStartAttributePathCommand();
-                    WriteMoveTo(measureX, staffY);
-                    WriteVerticalLineToRelative(StaffHeight);
-                    WriteEndAttributePathCommand();
-                    _writer.WriteAttributeString("class", "s");
+                    _writer.WriteStartElementUse("#s", measureX, staffY);
                     _writer.WriteEndElement();
 
                     if (measure.TimeSignature != currentTimeSignature)
@@ -176,12 +190,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                     {
                         var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
 
-                        _writer.WriteStartElement("path");
-                        WriteStartAttributePathCommand();
-                        WriteMoveTo(beatX, staffY);
-                        WriteVerticalLineToRelative(StaffHeight);
-                        WriteEndAttributePathCommand();
-                        _writer.WriteAttributeString("class", "w");
+                        _writer.WriteStartElementUse("#l", beatX, staffY);
                         _writer.WriteEndElement();
                     }
                 }
