@@ -3,6 +3,7 @@ using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces;
 using ScoreHunter.Drawing.Abstractions.Interfaces.IO;
 using ScoreHunter.Drawing.Svg.Extensions;
+using ScoreHunter.Drawing.Svg.Xml;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace ScoreHunter.Drawing.Svg.IO
         private const double SustainHeight = 7;
 
         private readonly XmlWriter _writer;
+        private readonly SvgPathWriter _svgPathWriter;
 
         private readonly bool _leaveOpen;
         private bool _disposed;
@@ -36,6 +38,7 @@ namespace ScoreHunter.Drawing.Svg.IO
         public SvgTablatureWriter(XmlWriter writer, bool leaveOpen)
         {
             _writer = writer;
+            _svgPathWriter = new XmlSvgPathWriter(writer);
             _leaveOpen = leaveOpen;
         }
 
@@ -47,6 +50,7 @@ namespace ScoreHunter.Drawing.Svg.IO
                 {
                     _writer.Dispose();
                 }
+                _svgPathWriter.Dispose();
                 _disposed = true;
             }
         }
@@ -301,10 +305,14 @@ namespace ScoreHunter.Drawing.Svg.IO
 
             _writer.WriteStartElement("path");
             _writer.WriteAttributeString("id", "h");
-            WriteStartAttributePathCommand();
-            WriteMoveTo(0, 0);
-            WriteVerticalLineToRelative(StaffHeight);
-            WriteEndAttributePathCommand();
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            _svgPathWriter.WriteMoveTo(0, 0);
+            _svgPathWriter.WriteVerticalLineToRelative(StaffHeight);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
             _writer.WriteAttributeDouble("stroke-width", 1);
             _writer.WriteEndElement();
 
@@ -350,20 +358,28 @@ namespace ScoreHunter.Drawing.Svg.IO
         private void WriteStaff(double y, double width)
         {
             _writer.WriteStartElement("path");
-            WriteStartAttributePathCommand();
-            WriteMoveTo(StaffPaddingX, y);
-            WriteHorizontalLineToRelative(width);
-            WriteVerticalLineToRelative(StaffHeight);
-            WriteHorizontalLineToRelative(-width);
-            WriteEndAttributePathCommand();
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            _svgPathWriter.WriteMoveTo(StaffPaddingX, y);
+            _svgPathWriter.WriteHorizontalLineToRelative(width);
+            _svgPathWriter.WriteVerticalLineToRelative(StaffHeight);
+            _svgPathWriter.WriteHorizontalLineToRelative(-width);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
             _writer.WriteAttributeString("class", "s");
             _writer.WriteEndElement();
 
             _writer.WriteStartElement("path");
-            WriteStartAttributePathCommand();
-            WriteMoveTo(StaffPaddingX, y + StaffHeight / 2);
-            WriteHorizontalLineToRelative(width);
-            WriteEndAttributePathCommand();
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            _svgPathWriter.WriteMoveTo(StaffPaddingX, y + StaffHeight / 2);
+            _svgPathWriter.WriteHorizontalLineToRelative(width);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
             _writer.WriteAttributeString("class", "w");
             _writer.WriteEndElement();
         }
@@ -392,12 +408,16 @@ namespace ScoreHunter.Drawing.Svg.IO
         private void WriteSustain(double x, double y, double width)
         {
             _writer.WriteStartElement("path");
-            WriteStartAttributePathCommand();
-            WriteMoveTo(x, y);
-            WriteHorizontalLineToRelative(width);
-            WriteVerticalLineToRelative(SustainHeight);
-            WriteHorizontalLineToRelative(-width);
-            WriteEndAttributePathCommand();
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            _svgPathWriter.WriteMoveTo(x, y);
+            _svgPathWriter.WriteHorizontalLineToRelative(width);
+            _svgPathWriter.WriteVerticalLineToRelative(SustainHeight);
+            _svgPathWriter.WriteHorizontalLineToRelative(-width);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
             _writer.WriteAttributeString("class", "l");
             _writer.WriteEndElement();
         }
@@ -430,66 +450,19 @@ namespace ScoreHunter.Drawing.Svg.IO
         private void WritePhrase(double x, double y, double width, string @class)
         {
             _writer.WriteStartElement("path");
-            WriteStartAttributePathCommand();
-            WriteMoveTo(x, y);
-            WriteHorizontalLineToRelative(width);
-            WriteVerticalLineToRelative(StaffHeight);
-            WriteHorizontalLineToRelative(-width);
-            WriteClosePath();
-            WriteEndAttributePathCommand();
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            _svgPathWriter.WriteMoveTo(x, y);
+            _svgPathWriter.WriteHorizontalLineToRelative(width);
+            _svgPathWriter.WriteVerticalLineToRelative(StaffHeight);
+            _svgPathWriter.WriteHorizontalLineToRelative(-width);
+            _svgPathWriter.WriteClosePath();
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
             _writer.WriteAttributeString("class", @class);
             _writer.WriteEndElement();
-        }
-
-        private void WriteStartAttributePathCommand()
-        {
-            _writer.WriteStartAttribute("d");
-        }
-
-        private void WritePathCommand(string command)
-        {
-            if (_inPathCommand)
-            {
-                _writer.WriteString(" ");
-            }
-            _writer.WriteString(command);
-            _inPathCommand = true;
-        }
-
-        private void WritePathCommandParameter(double value)
-        {
-            _writer.WriteString(" ");
-            _writer.WriteValue(value);
-        }
-
-        private void WriteMoveTo(double x, double y)
-        {
-            WritePathCommand("M");
-            WritePathCommandParameter(x);
-            WritePathCommandParameter(y);
-        }
-
-        private void WriteHorizontalLineToRelative(double dx)
-        {
-            WritePathCommand("h");
-            WritePathCommandParameter(dx);
-        }
-
-        private void WriteVerticalLineToRelative(double dy)
-        {
-            WritePathCommand("v");
-            WritePathCommandParameter(dy);
-        }
-
-        private void WriteClosePath()
-        {
-            WritePathCommand("Z");
-        }
-
-        private void WriteEndAttributePathCommand()
-        {
-            _writer.WriteEndAttribute();
-            _inPathCommand = false;
         }
 
         private double TicksToPixels(int ticks, int ticksPerQuarterNote)
