@@ -5,15 +5,74 @@ namespace ScoreHunter.Drawing.Svg
 {
     public abstract class SvgPathWriter : IDisposable
     {
-        public abstract SvgPathWriteState WriteState { get; }
+        private char _command;
 
-        public abstract void StartPath();
-        public abstract void EndPath();
+        public SvgPathWriteState WriteState { get; private set; }
 
-        protected abstract void WriteCommand(char command);
-        protected abstract void WriteParameter(double value);
+        protected abstract void WriteCommand(char command, SvgPathWriteState writeState);
+        protected abstract void WriteParameter(double value, SvgPathWriteState writeState);
+        protected abstract void WriteSeparator(double value);
 
-        protected void WriteParameter(bool value)
+        public void StartPath()
+        {
+            WriteState = SvgPathWriteState.Path;
+        }
+
+        public void EndPath()
+        {
+            WriteState = SvgPathWriteState.Closed;
+            _command = '\0';
+        }
+
+        private void WriteCommand(char command)
+        {
+            switch (WriteState)
+            {
+                case SvgPathWriteState.Path:
+                case SvgPathWriteState.Command:
+                    WriteCommandCore(command);
+                    break;
+                case SvgPathWriteState.Parameter:
+                    if (_command != command)
+                    {
+                        WriteCommandCore(command);
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private void WriteCommandCore(char command)
+        {
+            WriteCommand(command, WriteState);
+            WriteState = SvgPathWriteState.Command;
+            _command = command;
+        }
+
+        private void WriteParameter(double value)
+        {
+            switch (WriteState)
+            {
+                case SvgPathWriteState.Command:
+                    WriteParameterCore(value);
+                    break;
+                case SvgPathWriteState.Parameter:
+                    WriteSeparator(value);
+                    WriteParameterCore(value);
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private void WriteParameterCore(double value)
+        {
+            WriteParameter(value, WriteState);
+            WriteState = SvgPathWriteState.Parameter;
+        }
+
+        private void WriteParameter(bool value)
         {
             if (value)
             {
