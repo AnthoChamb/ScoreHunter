@@ -139,7 +139,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(dy);
         }
 
-        public void WriteCubicBezier(double x1, double y1, double x2, double y2, double x, double y)
+        public void WriteCubicBezierCurve(double x1, double y1, double x2, double y2, double x, double y)
         {
             WriteCommand('C');
             WriteParameter(x1);
@@ -150,7 +150,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(y);
         }
 
-        public void WriteCubicBezierRelative(double dx1, double dy1, double dx2, double dy2, double dx, double dy)
+        public void WriteCubicBezierCurveRelative(double dx1, double dy1, double dx2, double dy2, double dx, double dy)
         {
             WriteCommand('c');
             WriteParameter(dx1);
@@ -161,7 +161,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(dy);
         }
 
-        public void WriteSmoothCubicBezier(double x2, double y2, double x, double y)
+        public void WriteSmoothCubicBezierCurve(double x2, double y2, double x, double y)
         {
             WriteCommand('S');
             WriteParameter(x2);
@@ -170,7 +170,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(y);
         }
 
-        public void WriteSmoothCubicBezierRelative(double dx2, double dy2, double dx, double dy)
+        public void WriteSmoothCubicBezierCurveRelative(double dx2, double dy2, double dx, double dy)
         {
             WriteCommand('s');
             WriteParameter(dx2);
@@ -179,7 +179,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(dy);
         }
 
-        public void WriteQuadraticBezier(double x1, double y1, double x, double y)
+        public void WriteQuadraticBezierCurve(double x1, double y1, double x, double y)
         {
             WriteCommand('Q');
             WriteParameter(x1);
@@ -188,7 +188,7 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(y);
         }
 
-        public void WriteQuadraticBezierRelative(double dx1, double dy1, double dx, double dy)
+        public void WriteQuadraticBezierCurveRelative(double dx1, double dy1, double dx, double dy)
         {
             WriteCommand('q');
             WriteParameter(dx1);
@@ -197,14 +197,14 @@ namespace ScoreHunter.Drawing.Svg
             WriteParameter(dy);
         }
 
-        public void WriteSmoothQuadraticBezier(double x, double y)
+        public void WriteSmoothQuadraticBezierCurve(double x, double y)
         {
             WriteCommand('T');
             WriteParameter(x);
             WriteParameter(y);
         }
 
-        public void WriteSmoothQuadraticBezierRelative(double dx, double dy)
+        public void WriteSmoothQuadraticBezierCurveRelative(double dx, double dy)
         {
             WriteCommand('t');
             WriteParameter(dx);
