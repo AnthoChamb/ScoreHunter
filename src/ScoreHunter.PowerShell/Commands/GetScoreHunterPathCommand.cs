@@ -1,11 +1,8 @@
-﻿using FsgXmk.Factories;
-using ScoreHunter.Core.Enums;
+﻿using ScoreHunter.Core.Enums;
 using ScoreHunter.Core.Interfaces;
 using ScoreHunter.Options;
 using ScoreHunter.PowerShell.Enums;
 using ScoreHunter.PowerShell.Factories;
-using ScoreHunter.Xmk.Factories;
-using System.IO;
 using System.Linq;
 using System.Management.Automation;
 
@@ -13,12 +10,10 @@ namespace ScoreHunter.PowerShell.Commands
 {
     [Cmdlet(VerbsCommon.Get, "ScoreHunterPath")]
     [OutputType(typeof(IPath))]
-    public class GetScoreHunterPathCommand : PSCmdlet
+    public class GetScoreHunterPathCommand : Cmdlet
     {
-        [Alias("PSPath")]
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty]
-        public string[] LiteralPath { get; set; }
+        public ITrack[] Track { get; set; }
 
         [Parameter]
         public Difficulty Difficulty { get; set; } = Difficulty.Expert;
@@ -59,25 +54,8 @@ namespace ScoreHunter.PowerShell.Commands
             var trackOptions = new TrackOptions(SustainLength, SustainBurstLength, MaxHeroPowerCount);
             var optimiser = new Optimiser(optimiserOptions, scoringOptions, trackOptions);
 
-            var headerStreamReaderFactory = new XmkHeaderStreamReaderFactory(new XmkHeaderByteArrayReaderFactory());
-            var tempoStreamReaderFactory = new XmkTempoStreamReaderFactory(new XmkTempoByteArrayReaderFactory());
-            var timeSignatureReaderFactory = new XmkTimeSignatureStreamReaderFactory(new XmkTimeSignatureByteArrayReaderFactory());
-            var eventStreamReaderFactory = new XmkEventStreamReaderFactory(new XmkEventByteArrayReaderFactory());
-            var trackStreamReaderFactory = new XmkTrackStreamReaderFactory(headerStreamReaderFactory,
-                                                                           tempoStreamReaderFactory,
-                                                                           timeSignatureReaderFactory,
-                                                                           eventStreamReaderFactory);
-
-            ITrack track;
-
-            foreach (var path in LiteralPath)
+            foreach (var track in Track)
             {
-                using (var stream = File.OpenRead(SessionState.Path.GetUnresolvedProviderPathFromPSPath(path)))
-                using (var reader = trackStreamReaderFactory.Create(stream, true))
-                {
-                    track = reader.Read();
-                }
-
                 var optimalPath = optimiser.Optimize(track, Difficulty);
                 WriteObject(optimalPath);
             }
