@@ -29,7 +29,6 @@ namespace ScoreHunter.Drawing.Svg.IO
 
         private readonly bool _leaveOpen;
         private bool _disposed;
-        private bool _inPathCommand;
 
         public SvgTablatureWriter(XmlWriter writer) : this(writer, false)
         {
@@ -299,6 +298,28 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
+        private async Task WriteStyleElementAsync()
+        {
+            await _writer.WriteStartElementAsync("style").ConfigureAwait(false);
+            await _writer.WriteStringAsync("text { font-family: sans-serif; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".s, .w { fill: transparent; stroke-width: 1px; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".s { stroke: black; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".w { stroke: gray; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".m, .t { font-size: ").ConfigureAwait(false);
+            await _writer.WriteValueAsync(TextFontSize).ConfigureAwait(false);
+            await _writer.WriteStringAsync("px; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".n { font-size: ").ConfigureAwait(false);
+            await _writer.WriteValueAsync(StaffHeight / 2).ConfigureAwait(false);
+            await _writer.WriteStringAsync("px; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".m { fill: red; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".t, .n, .l { fill: gray; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".g, .y, .b { opacity: 0.3; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".g { fill: green; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".y { fill: yellow; }").ConfigureAwait(false);
+            await _writer.WriteStringAsync(".b { fill: blue; }").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         private void WriteDefsElement()
         {
             _writer.WriteStartElement("defs");
@@ -355,6 +376,62 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
+        private async Task WriteDefsElementAsync()
+        {
+            await _writer.WriteStartElementAsync("defs").ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("path").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "h").ConfigureAwait(false);
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            await _svgPathWriter.WriteMoveToAsync(0, 0).ConfigureAwait(false);
+            await _svgPathWriter.WriteVerticalLineToRelativeAsync(StaffHeight).ConfigureAwait(false);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
+            await _writer.WriteAttributeDoubleAsync("stroke-width", 1).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementUseAsync("#h").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "s").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "black").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementUseAsync("#h").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "l").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "gray").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("circle").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "n").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("r", NoteSize / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "black").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("stroke-width", 1).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementUseAsync("#n").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "b").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("fill", "black").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementUseAsync("#n").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "w").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("fill", "white").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("rect").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "o").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("width", NoteSize / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("height", StaffHeight + NoteSize).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "black").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("fill", "white").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("stroke-width", 1).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         private void WriteStaff(double y, double width)
         {
             _writer.WriteStartElement("path");
@@ -384,6 +461,35 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
+        private async Task WriteStaffAsync(double y, double width)
+        {
+            await _writer.WriteStartElementAsync("path").ConfigureAwait(false);
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            await _svgPathWriter.WriteMoveToAsync(StaffPaddingX, y).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(width).ConfigureAwait(false);
+            await _svgPathWriter.WriteVerticalLineToRelativeAsync(StaffHeight).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(-width).ConfigureAwait(false);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
+            await _writer.WriteAttributeStringAsync("class", "s").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("path").ConfigureAwait(false);
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            await _svgPathWriter.WriteMoveToAsync(StaffPaddingX, y + StaffHeight / 2).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(width).ConfigureAwait(false);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
+            await _writer.WriteAttributeStringAsync("class", "w").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         private void WriteTimeSignature(double x, double y, ITimeSignature timeSignature)
         {
             _writer.WriteStartElement("text");
@@ -405,6 +511,27 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
+        private async Task WriteTimeSignatureAsync(double x, double y, ITimeSignature timeSignature)
+        {
+            await _writer.WriteStartElementAsync("text").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", x).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", y + StaffHeight / 2 - TextPaddingY / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("class", "n").ConfigureAwait(false);
+
+            await _writer.WriteValueAsync(timeSignature.Numerator).ConfigureAwait(false);
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("text").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", x).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", y + StaffHeight - TextPaddingY / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("class", "n").ConfigureAwait(false);
+
+            await _writer.WriteValueAsync(timeSignature.Denominator).ConfigureAwait(false);
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         private void WriteSustain(double x, double y, double width)
         {
             _writer.WriteStartElement("path");
@@ -422,6 +549,23 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
+        private async Task WriteSustainAsync(double x, double y, double width)
+        {
+            await _writer.WriteStartElementAsync("path").ConfigureAwait(false);
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            await _svgPathWriter.WriteMoveToAsync(x, y).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(width).ConfigureAwait(false);
+            await _svgPathWriter.WriteVerticalLineToRelativeAsync(SustainHeight).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(-width).ConfigureAwait(false);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
+            await _writer.WriteAttributeStringAsync("class", "l").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         private void WriteMeasureCount(double x, double y, int measureCount)
         {
             _writer.WriteStartElement("text");
@@ -432,6 +576,18 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteValue(measureCount);
 
             _writer.WriteEndElement();
+        }
+
+        private async Task WriteMeasureCountAsync(double x, double y, int measureCount)
+        {
+            await _writer.WriteStartElementAsync("text").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", x).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", y).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("class", "m").ConfigureAwait(false);
+
+            await _writer.WriteValueAsync(measureCount).ConfigureAwait(false);
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         private void WriteTempo(double x, double y, ITempo tempo)
@@ -445,6 +601,19 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteValue(Math.Round(tempo.BeatsPerMinute));
 
             _writer.WriteEndElement();
+        }
+
+        private async Task WriteTempoAsync(double x, double y, ITempo tempo)
+        {
+            await _writer.WriteStartElementAsync("text").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", x).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", y).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("class", "t").ConfigureAwait(false);
+
+            await _writer.WriteStringAsync("\u2669=").ConfigureAwait(false);
+            await _writer.WriteValueAsync(Math.Round(tempo.BeatsPerMinute)).ConfigureAwait(false);
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         private void WritePhrase(double x, double y, double width, string @class)
@@ -463,6 +632,24 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndAttribute();
             _writer.WriteAttributeString("class", @class);
             _writer.WriteEndElement();
+        }
+
+        private async Task WritePhraseAsync(double x, double y, double width, string @class)
+        {
+            await _writer.WriteStartElementAsync("path").ConfigureAwait(false);
+            _writer.WriteStartAttribute("d");
+
+            _svgPathWriter.StartPath();
+            await _svgPathWriter.WriteMoveToAsync(x, y).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(width).ConfigureAwait(false);
+            await _svgPathWriter.WriteVerticalLineToRelativeAsync(StaffHeight).ConfigureAwait(false);
+            await _svgPathWriter.WriteHorizontalLineToRelativeAsync(-width).ConfigureAwait(false);
+            await _svgPathWriter.WriteClosePathAsync().ConfigureAwait(false);
+            _svgPathWriter.EndPath();
+
+            _writer.WriteEndAttribute();
+            await _writer.WriteAttributeStringAsync("class", @class).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         private double TicksToPixels(int ticks, int ticksPerQuarterNote)
