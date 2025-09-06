@@ -270,10 +270,220 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteEndElement();
         }
 
-        public Task WriteAsync(ITablature tablature, CancellationToken cancellationToken = default)
+        public async Task WriteAsync(ITablature tablature, CancellationToken cancellationToken = default)
         {
-            Write(tablature);
-            return Task.CompletedTask;
+            double TicksToPixels(int ticks)
+            {
+                return this.TicksToPixels(ticks, tablature.TicksPerQuarterNote);
+            }
+
+            await _writer.WriteStartElementAsync(null, "svg", "http://www.w3.org/2000/svg").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync(null, "version", null, "1.1").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync(null, "width", null, (StaffPaddingX * 2 + TicksToPixels(tablature.TicksPerStaff)).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync(null, "height", null, (StaffPaddingY * 2 + ((StaffHeight + StaffPaddingY) * tablature.Staves.Count())).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+
+            await WriteStyleElementAsync().ConfigureAwait(false);
+            await WriteDefsElementAsync().ConfigureAwait(false);
+
+            ITimeSignature currentTimeSignature = null;
+            var measureCount = 0;
+            var staffY = StaffPaddingY;
+
+            foreach (var staff in tablature.Staves)
+            {
+                var staffWidth = TicksToPixels(staff.EndTicks - staff.StartTicks);
+                var measureCountY = staffY - (NoteSize / 2 + TextPaddingY);
+                var tempoY = measureCountY - (TextFontSize + TextPaddingY);
+
+                await WriteStaffAsync(staffY, staffWidth).ConfigureAwait(false);
+
+                foreach (var measure in staff.Measures)
+                {
+                    var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
+
+                    await _writer.WriteStartElementUseAsync("#s", measureX, staffY).ConfigureAwait(false);
+                    await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+                    if (measure.TimeSignature != currentTimeSignature)
+                    {
+                        currentTimeSignature = measure.TimeSignature;
+                        var timeSignatureX = measureX + TicksToPixels(currentTimeSignature.Ticks - measure.StartTicks) + TextFontSize;
+                        await WriteTimeSignatureAsync(timeSignatureX, staffY, currentTimeSignature).ConfigureAwait(false);
+                    }
+
+                    foreach (var beat in measure.Beats)
+                    {
+                        var beatX = measureX + TicksToPixels(beat.Ticks - measure.StartTicks);
+
+                        await _writer.WriteStartElementUseAsync("#l", beatX, staffY).ConfigureAwait(false);
+                        await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                    }
+                }
+
+                foreach (var sustain in staff.Sustains)
+                {
+                    var sustainX = StaffPaddingX + TicksToPixels(sustain.StartTicks - staff.StartTicks);
+                    var sustainWidth = TicksToPixels(sustain.EndTicks - sustain.StartTicks);
+
+                    switch (sustain.Frets.Flags)
+                    {
+                        case FretFlags.Black1:
+                        case FretFlags.White1:
+                        case FretFlags.Black1 | FretFlags.White1:
+                            await WriteSustainAsync(sustainX, staffY - SustainHeight / 2, sustainWidth).ConfigureAwait(false);
+                            break;
+                        case FretFlags.Open:
+                        case FretFlags.Black2:
+                        case FretFlags.White2:
+                        case FretFlags.Black2 | FretFlags.White2:
+                            await WriteSustainAsync(sustainX, staffY + StaffHeight / 2 - SustainHeight / 2, sustainWidth).ConfigureAwait(false);
+                            break;
+                        case FretFlags.Black3:
+                        case FretFlags.White3:
+                        case FretFlags.Black3 | FretFlags.White3:
+                            await WriteSustainAsync(sustainX, staffY + StaffHeight - SustainHeight / 2, sustainWidth).ConfigureAwait(false);
+                            break;
+                    }
+                }
+
+                foreach (var measure in staff.Measures)
+                {
+                    measureCount++;
+                    var measureX = StaffPaddingX + TicksToPixels(measure.StartTicks - staff.StartTicks);
+                    await WriteMeasureCountAsync(measureX, measureCountY, measureCount).ConfigureAwait(false);
+
+                    foreach (var tempo in measure.Tempos)
+                    {
+                        var tempoX = measureX + TicksToPixels(tempo.Ticks - measure.StartTicks);
+                        await WriteTempoAsync(tempoX, tempoY, tempo).ConfigureAwait(false);
+                    }
+
+                    foreach (var note in measure.Notes)
+                    {
+                        var noteX = measureX + TicksToPixels(note.Ticks - measure.StartTicks);
+
+                        switch (note.Frets.Flags)
+                        {
+                            case FretFlags.Open:
+                                await _writer.WriteStartElementUseAsync("#o", noteX - NoteSize / 4, staffY - NoteSize / 2).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black1:
+                                await _writer.WriteStartElementUseAsync("#b", noteX, staffY).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black2:
+                                await _writer.WriteStartElementUseAsync("#b", noteX, staffY + StaffHeight / 2).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black3:
+                                await _writer.WriteStartElementUseAsync("#b", noteX, staffY + StaffHeight).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.White1:
+                                await _writer.WriteStartElementUseAsync("#w", noteX, staffY).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.White2:
+                                await _writer.WriteStartElementUseAsync("#w", noteX, staffY + StaffHeight / 2).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.White3:
+                                await _writer.WriteStartElementUseAsync("#w", noteX, staffY + StaffHeight).ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black1 | FretFlags.White1:
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black2 | FretFlags.White2:
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight / 2 - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                            case FretFlags.Black3 | FretFlags.White3:
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
+                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
+                                break;
+                        }
+                    }
+                }
+
+                foreach (var heroPowerPhrase in staff.HeroPowerPhrases)
+                {
+                    var heroPowerPhraseX = StaffPaddingX + TicksToPixels(heroPowerPhrase.StartTicks - staff.StartTicks);
+                    var heroPowerPhraseWidth = TicksToPixels(heroPowerPhrase.EndTicks - heroPowerPhrase.StartTicks);
+                    await WritePhraseAsync(heroPowerPhraseX, staffY, heroPowerPhraseWidth, "g").ConfigureAwait(false);
+                }
+
+                foreach (var highwayPhrase in staff.HighwayPhrases)
+                {
+                    var highwayPhraseX = StaffPaddingX + TicksToPixels(highwayPhrase.StartTicks - staff.StartTicks);
+                    var highwayPhraseWidth = TicksToPixels(highwayPhrase.EndTicks - highwayPhrase.StartTicks);
+                    await WritePhraseAsync(highwayPhraseX, staffY, highwayPhraseWidth, "y").ConfigureAwait(false);
+                }
+
+                foreach (var activation in staff.Activations)
+                {
+                    var activationX = StaffPaddingX + TicksToPixels(activation.StartTicks - staff.StartTicks);
+                    var activationWidth = TicksToPixels(activation.EndTicks - activation.StartTicks);
+                    await WritePhraseAsync(activationX, staffY, activationWidth, "b").ConfigureAwait(false);
+                }
+
+                staffY += StaffHeight + StaffPaddingY;
+            }
+
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         private void WriteStyleElement()
