@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using ScoreHunter.Drawing.Svg.Enums;
 using System;
+using System.Threading.Tasks;
 
 namespace ScoreHunter.Drawing.Svg
 {
@@ -11,8 +12,28 @@ namespace ScoreHunter.Drawing.Svg
         public SvgPathWriteState WriteState { get; private set; }
 
         protected abstract void WriteCommand(char command, SvgPathWriteState writeState);
+
+        protected virtual Task WriteCommandAsync(char command, SvgPathWriteState writeState)
+        {
+            WriteCommand(command, writeState);
+            return Task.CompletedTask;
+        }
+
         protected abstract void WriteParameter(double value, SvgPathWriteState writeState);
+
+        protected virtual Task WriteParameterAsync(double value, SvgPathWriteState writeState)
+        {
+            WriteParameter(value, writeState);
+            return Task.CompletedTask;
+        }
+
         protected abstract void WriteSeparator(double value);
+
+        protected virtual Task WriteSeparatorAsync(double value)
+        {
+            WriteSeparator(value);
+            return Task.CompletedTask;
+        }
 
         public void StartPath()
         {
@@ -45,9 +66,36 @@ namespace ScoreHunter.Drawing.Svg
             }
         }
 
+        private async Task WriteCommandAsync(char command)
+        {
+            switch (WriteState)
+            {
+                case SvgPathWriteState.Path:
+                case SvgPathWriteState.Command:
+                    await WriteCommandCoreAsync(command).ConfigureAwait(false);
+                    break;
+                case SvgPathWriteState.Parameter:
+                    if (_command != command)
+                    {
+                        await WriteCommandCoreAsync(command).ConfigureAwait(false);
+                    }
+                    break;
+                default:
+                    ThrowHelper.ThrowInvalidOperationException();
+                    break;
+            }
+        }
+
         private void WriteCommandCore(char command)
         {
             WriteCommand(command, WriteState);
+            WriteState = SvgPathWriteState.Command;
+            _command = command;
+        }
+
+        private async Task WriteCommandCoreAsync(char command)
+        {
+            await WriteCommandAsync(command, WriteState).ConfigureAwait(false);
             WriteState = SvgPathWriteState.Command;
             _command = command;
         }
@@ -69,9 +117,32 @@ namespace ScoreHunter.Drawing.Svg
             }
         }
 
+        private async Task WriteParameterAsync(double value)
+        {
+            switch (WriteState)
+            {
+                case SvgPathWriteState.Command:
+                    await WriteParameterCoreAsync(value).ConfigureAwait(false);
+                    break;
+                case SvgPathWriteState.Parameter:
+                    await WriteSeparatorAsync(value).ConfigureAwait(false);
+                    await WriteParameterCoreAsync(value).ConfigureAwait(false);
+                    break;
+                default:
+                    ThrowHelper.ThrowInvalidOperationException();
+                    break;
+            }
+        }
+
         private void WriteParameterCore(double value)
         {
             WriteParameter(value, WriteState);
+            WriteState = SvgPathWriteState.Parameter;
+        }
+
+        private async Task WriteParameterCoreAsync(double value)
+        {
+            await WriteParameterAsync(value, WriteState).ConfigureAwait(false);
             WriteState = SvgPathWriteState.Parameter;
         }
 
@@ -84,6 +155,18 @@ namespace ScoreHunter.Drawing.Svg
             else
             {
                 WriteParameter(0);
+            }
+        }
+
+        private async Task WriteParameterAsync(bool value)
+        {
+            if (value)
+            {
+                await WriteParameterAsync(1).ConfigureAwait(false);
+            }
+            else
+            {
+                await WriteParameterAsync(0).ConfigureAwait(false);
             }
         }
 
