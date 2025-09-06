@@ -84,10 +84,10 @@ namespace ScoreHunter.CommandLine.Actions
             var tablature = tablatureFactory.Create(track, difficulty, optimalPath);
 
             using (var stream = output.Create())
-            using (var xmlWriter = XmlWriter.Create(stream))
+            using (var xmlWriter = XmlWriter.Create(stream, new XmlWriterSettings { Async = true }))
             using (var writer = new SvgTablatureWriter(xmlWriter, true))
             {
-                writer.Write(tablature);
+                await writer.WriteAsync(tablature, cancellationToken);
             }
 
             return 0;
