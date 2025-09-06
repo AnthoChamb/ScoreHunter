@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ScoreHunter.Drawing.Abstractions\ScoreHunter.Drawing.Abstractions.csproj" />
   </ItemGroup>
 

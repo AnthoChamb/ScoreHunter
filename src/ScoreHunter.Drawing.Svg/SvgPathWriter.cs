@@ -1,4 +1,5 @@
-﻿using ScoreHunter.Drawing.Svg.Enums;
+﻿using CommunityToolkit.Diagnostics;
+using ScoreHunter.Drawing.Svg.Enums;
 using System;
 
 namespace ScoreHunter.Drawing.Svg
@@ -39,7 +40,8 @@ namespace ScoreHunter.Drawing.Svg
                     }
                     break;
                 default:
-                    throw new InvalidOperationException();
+                    ThrowHelper.ThrowInvalidOperationException();
+                    break;
             }
         }
 
@@ -62,7 +64,8 @@ namespace ScoreHunter.Drawing.Svg
                     WriteParameterCore(value);
                     break;
                 default:
-                    throw new InvalidOperationException();
+                    ThrowHelper.ThrowInvalidOperationException();
+                    break;
             }
         }
 
