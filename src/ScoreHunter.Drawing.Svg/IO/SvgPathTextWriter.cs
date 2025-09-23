@@ -27,7 +27,7 @@ namespace ScoreHunter.Drawing.Svg.IO
 
         protected override async Task WriteCommandAsync(char command, SvgPathWriteState writeState)
         {
-            await _writer.WriteAsync(command.ToString()).ConfigureAwait(false);
+            await _writer.WriteAsync(command).ConfigureAwait(false);
         }
 
         protected override void WriteParameter(double value, SvgPathWriteState writeState)
