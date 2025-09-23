@@ -5,14 +5,14 @@ namespace ScoreHunter.Drawing.Svg.Extensions
 {
     public static class XmlWriterExtensions
     {
-        public static void WriteAttributeDouble(this XmlWriter writer, string localName, double value)
+        public static void WriteAttributeValue(this XmlWriter writer, string localName, double value)
         {
             writer.WriteStartAttribute(localName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
 
-        public static async Task WriteAttributeDoubleAsync(this XmlWriter writer, string localName, double value)
+        public static async Task WriteAttributeValueAsync(this XmlWriter writer, string localName, double value)
         {
             await writer.WriteAttributeStringAsync(localName, XmlConvert.ToString(value)).ConfigureAwait(false);
         }
