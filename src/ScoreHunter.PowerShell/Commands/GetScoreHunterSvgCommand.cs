@@ -34,10 +34,12 @@ namespace ScoreHunter.PowerShell.Commands
             var tablature = tablatureFactory.Create(Track, Difficulty, Path);
 
             using (var output = new StringWriter())
-            using (var xmlWriter = XmlWriter.Create(output))
-            using (var writer = new SvgTablatureWriter(xmlWriter, true))
             {
-                writer.Write(tablature);
+                using (var xmlWriter = XmlWriter.Create(output))
+                using (var writer = new SvgTablatureWriter(xmlWriter, true))
+                {
+                    writer.Write(tablature);
+                }
                 WriteObject(output.ToString());
             }
         }
