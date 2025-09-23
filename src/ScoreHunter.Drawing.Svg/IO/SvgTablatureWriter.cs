@@ -177,66 +177,15 @@ namespace ScoreHunter.Drawing.Svg.IO
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black1 | FretFlags.White1:
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                                _writer.WriteEndElement();
-
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElementUse("#c", noteX - NoteSize / 2, staffY - NoteSize / 2);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black2 | FretFlags.White2:
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2 - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                                _writer.WriteEndElement();
-
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElementUse("#c", noteX - NoteSize / 2, staffY + StaffHeight / 2 - NoteSize / 2);
                                 _writer.WriteEndElement();
                                 break;
                             case FretFlags.Black3 | FretFlags.White3:
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "black");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
-                                _writer.WriteEndElement();
-
-                                _writer.WriteStartElement(null, "rect", null);
-                                _writer.WriteAttributeString(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "y", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture));
-                                _writer.WriteAttributeString(null, "stroke", null, "black");
-                                _writer.WriteAttributeString(null, "fill", null, "white");
-                                _writer.WriteAttributeString(null, "stroke-width", null, "1");
+                                _writer.WriteStartElementUse("#c", noteX - NoteSize / 2, staffY + StaffHeight - NoteSize / 2);
                                 _writer.WriteEndElement();
                                 break;
                         }
@@ -393,66 +342,15 @@ namespace ScoreHunter.Drawing.Svg.IO
                                 await _writer.WriteEndElementAsync().ConfigureAwait(false);
                                 break;
                             case FretFlags.Black1 | FretFlags.White1:
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
-                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
-
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, staffY.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteStartElementUseAsync("#c", noteX - NoteSize / 2, staffY - NoteSize / 2).ConfigureAwait(false);
                                 await _writer.WriteEndElementAsync().ConfigureAwait(false);
                                 break;
                             case FretFlags.Black2 | FretFlags.White2:
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight / 2 - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
-                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
-
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteStartElementUseAsync("#c", noteX - NoteSize / 2, staffY + StaffHeight / 2 - NoteSize / 2).ConfigureAwait(false);
                                 await _writer.WriteEndElementAsync().ConfigureAwait(false);
                                 break;
                             case FretFlags.Black3 | FretFlags.White3:
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
-                                await _writer.WriteEndElementAsync().ConfigureAwait(false);
-
-                                await _writer.WriteStartElementAsync(null, "rect", null).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "x", null, (noteX - NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "y", null, (staffY + StaffHeight).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "width", null, NoteSize.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "height", null, (NoteSize / 2).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke", null, "black").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "fill", null, "white").ConfigureAwait(false);
-                                await _writer.WriteAttributeStringAsync(null, "stroke-width", null, "1").ConfigureAwait(false);
+                                await _writer.WriteStartElementUseAsync("#c", noteX - NoteSize / 2, staffY + StaffHeight - NoteSize / 2).ConfigureAwait(false);
                                 await _writer.WriteEndElementAsync().ConfigureAwait(false);
                                 break;
                         }
@@ -574,6 +472,33 @@ namespace ScoreHunter.Drawing.Svg.IO
             _writer.WriteAttributeString("fill", "white");
             _writer.WriteEndElement();
 
+            _writer.WriteStartElement("svg");
+            _writer.WriteAttributeString("id", "c");
+            _writer.WriteAttributeDouble("width", NoteSize);
+            _writer.WriteAttributeDouble("height", NoteSize);
+
+            _writer.WriteStartElement("rect");
+            _writer.WriteAttributeDouble("x", 0);
+            _writer.WriteAttributeDouble("y", 0);
+            _writer.WriteAttributeDouble("width", NoteSize);
+            _writer.WriteAttributeDouble("height", NoteSize);
+            _writer.WriteAttributeString("stroke", "black");
+            _writer.WriteAttributeString("fill", "black");
+            _writer.WriteAttributeDouble("stroke-width", 1);
+            _writer.WriteEndElement();
+
+            _writer.WriteStartElement("rect");
+            _writer.WriteAttributeDouble("x", 0);
+            _writer.WriteAttributeDouble("y", NoteSize / 2);
+            _writer.WriteAttributeDouble("width", NoteSize);
+            _writer.WriteAttributeDouble("height", NoteSize / 2);
+            _writer.WriteAttributeString("stroke", "black");
+            _writer.WriteAttributeString("fill", "white");
+            _writer.WriteAttributeDouble("stroke-width", 1);
+            _writer.WriteEndElement();
+
+            _writer.WriteEndElement();
+
             _writer.WriteStartElement("rect");
             _writer.WriteAttributeString("id", "o");
             _writer.WriteAttributeDouble("width", NoteSize / 2);
@@ -628,6 +553,33 @@ namespace ScoreHunter.Drawing.Svg.IO
             await _writer.WriteStartElementUseAsync("#n").ConfigureAwait(false);
             await _writer.WriteAttributeStringAsync("id", "w").ConfigureAwait(false);
             await _writer.WriteAttributeStringAsync("fill", "white").ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("svg").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("id", "c").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("width", NoteSize).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("height", NoteSize).ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("rect").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", 0).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", 0).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("width", NoteSize).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("height", NoteSize).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "black").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("fill", "black").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("stroke-width", 1).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
+            await _writer.WriteStartElementAsync("rect").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("x", 0).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("y", NoteSize / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("width", NoteSize).ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("height", NoteSize / 2).ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("stroke", "black").ConfigureAwait(false);
+            await _writer.WriteAttributeStringAsync("fill", "white").ConfigureAwait(false);
+            await _writer.WriteAttributeDoubleAsync("stroke-width", 1).ConfigureAwait(false);
+            await _writer.WriteEndElementAsync().ConfigureAwait(false);
+
             await _writer.WriteEndElementAsync().ConfigureAwait(false);
 
             await _writer.WriteStartElementAsync("rect").ConfigureAwait(false);
