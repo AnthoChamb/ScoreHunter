@@ -73,12 +73,12 @@ namespace ScoreHunter.CommandLine.Actions
 
             var optimalPath = optimiser.Optimize(track, difficulty);
 
-            parseResult.Configuration.Output.WriteLine("Estimated score: " + optimalPath.Score);
-            parseResult.Configuration.Output.WriteLine("Miss: " + optimalPath.Miss);
+            parseResult.InvocationConfiguration.Output.WriteLine("Estimated score: " + optimalPath.Score);
+            parseResult.InvocationConfiguration.Output.WriteLine("Miss: " + optimalPath.Miss);
 
             foreach (var activation in optimalPath.Activations)
             {
-                parseResult.Configuration.Output.WriteLine("Hero Power: " + activation.HeroPower + ", Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
+                parseResult.InvocationConfiguration.Output.WriteLine("Hero Power: " + activation.HeroPower + ", Streak: " + activation.Streak + ", IsChained: " + activation.IsChained);
             }
 
             var tablature = tablatureFactory.Create(track, difficulty, optimalPath);
