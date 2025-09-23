@@ -30,5 +30,7 @@ The following code demonstrates usage of the ScoreHunter PowerShell module.
 
 ```pwsh
 Import-Module ScoreHunter
-Get-ScoreHunterPath guitar_3x2.xmk
+$track = Get-ScoreHunterTrack guitar_3x2.xmk
+$path = Get-ScoreHunterPath $track
+Get-ScoreHunterSvg $track $path | Out-File out.svg
 ```
