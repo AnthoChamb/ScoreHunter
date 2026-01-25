@@ -113,10 +113,7 @@ namespace ScoreHunter.Drawing.Factories
                             {
                                 var drawnActivation = new DrawnActivation(activation, ticks);
                                 activations.Add(drawnActivation);
-                                if (!double.IsPositiveInfinity(activation.End))
-                                {
-                                    SetActivationEndTicks(drawnActivation);
-                                }
+                                SetActivationEndTicks(drawnActivation);
                                 hasActivation = activationsEnumerator.MoveNext();
                             }
                         }
@@ -214,7 +211,7 @@ namespace ScoreHunter.Drawing.Factories
 
                                     foreach (var activation in activations)
                                     {
-                                        if (activation.EndTicks == -1 && !double.IsPositiveInfinity(activation.End))
+                                        if (activation.EndTicks == -1)
                                         {
                                             SetActivationEndTicks(activation);
                                         }

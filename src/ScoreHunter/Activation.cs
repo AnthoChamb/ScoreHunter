@@ -7,6 +7,7 @@ namespace ScoreHunter
     {
         public Activation(IHeroPower heroPower, Event @event, int streak, bool isChained)
         {
+            End = @event.Start + heroPower.Duration;
             HeroPower = heroPower;
             Event = @event;
             Streak = streak;
@@ -14,7 +15,7 @@ namespace ScoreHunter
         }
 
         public double Start => Event.Start;
-        public double End { get; set; } = double.PositiveInfinity;
+        public double End { get; set; }
         public IHeroPower HeroPower { get; }
         public Event Event { get; }
         public int Streak { get; }
