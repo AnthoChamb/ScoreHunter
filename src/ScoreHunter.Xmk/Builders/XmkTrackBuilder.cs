@@ -38,7 +38,7 @@ namespace ScoreHunter.Xmk.Builders
                 case EventType.HopoDetection:
                     break;
                 case EventType.Highway:
-                    _builder.AddHighwayPhrase(CreatePhrase(xmkEvent));
+                    AddXmkHighwayEvent(xmkEvent);
                     break;
                 default:
                     AddXmkNoteEvent(xmkEvent);
@@ -46,6 +46,16 @@ namespace ScoreHunter.Xmk.Builders
             }
 
             return this;
+        }
+
+        private void AddXmkHighwayEvent(IXmkEvent xmkEvent)
+        {
+            switch (xmkEvent.Note)
+            {
+                case EventNote.Highway:
+                    _builder.AddHighwayPhrase(CreatePhrase(xmkEvent));
+                    break;
+            }
         }
 
         private void AddXmkNoteEvent(IXmkEvent xmkEvent)

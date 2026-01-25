@@ -13,6 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="FsgXmk" Version="1.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
@@ -22,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ScoreHunter.Xmk\ScoreHunter.Xmk.csproj" />
     <ProjectReference Include="..\..\src\ScoreHunter\ScoreHunter.csproj" />
     <ProjectReference Include="..\ScoreHunter.Testing\ScoreHunter.Testing.csproj" />
   </ItemGroup>
