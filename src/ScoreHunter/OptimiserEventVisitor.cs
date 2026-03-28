@@ -80,7 +80,7 @@ namespace ScoreHunter
             {
                 foreach (var heroPower in _options.HeroPowers)
                 {
-                    if (candidate.TrySetHeroPower(heroPower, out var heroPowerScore))
+                    if (candidate.TrySetHeroPower(note, heroPower, out var heroPowerScore))
                     {
                         heroPowerScore = heroPowerScore.HitNote(note);
                         Cache(heroPowerScore, cache);

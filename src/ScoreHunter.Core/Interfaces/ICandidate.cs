@@ -17,7 +17,7 @@ namespace ScoreHunter.Core.Interfaces
         bool TryActivate(NoteEvent note, out ICandidate candidate);
         bool TryActivate(SustainEvent sustain, out ICandidate candidate);
         bool TryMiss(NoteEvent note, out ICandidate candidate);
-        bool TrySetHeroPower(IHeroPower heroPower, out ICandidate candidate);
+        bool TrySetHeroPower(NoteEvent note, IHeroPower heroPower, out ICandidate candidate);
 
         ICacheKey GetCacheKey();
     }

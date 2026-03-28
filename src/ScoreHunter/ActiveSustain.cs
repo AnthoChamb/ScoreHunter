@@ -1,5 +1,6 @@
 ﻿using ScoreHunter.Core.Interfaces;
 using System;
+using System.Diagnostics;
 
 namespace ScoreHunter
 {
@@ -11,6 +12,7 @@ namespace ScoreHunter
 
         public ActiveSustain(INote note, double sustainLength, double sustainBurstLength)
         {
+            Debug.Assert(note.IsSustain);
             Position = note.Start;
             _sustainLength = sustainLength;
             _sustainBurstPosition = note.End - sustainBurstLength;

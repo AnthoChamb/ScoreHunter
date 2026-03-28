@@ -4,6 +4,7 @@ using ScoreHunter.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace ScoreHunter
 {
@@ -113,18 +114,24 @@ namespace ScoreHunter
                 return this;
             }
 
-            public Builder SetHeroPower(IHeroPower heroPower)
+            public Builder SetHeroPower(NoteEvent note, IHeroPower heroPower)
             {
-                _flags &= ~ScoringFlags.HeroPower;
+                if (_flags.HasFlag(ScoringFlags.HeroPower))
+                {
+                    var index = _activations.Count - 1;
+                    _activations = _activations.SetItem(index, _activations[index].EndActivation(note.Start));
+                    _flags &= ~ScoringFlags.HeroPower;
+                }
+
                 _flags &= ~ScoringFlags.HeroPowerStreak;
                 _heroPower = heroPower;
                 _heroPowerCount = 0;
+                _heroPowerEnd = 0;
                 return this;
             }
 
             public Builder EndHeroPower()
             {
-                _activations[_activations.Count - 1].End = _heroPowerEnd;
                 _flags &= ~ScoringFlags.HeroPower;
                 _flags |= ScoringFlags.ChainHeroPower;
                 _heroPowerEnd = 0;
@@ -139,6 +146,7 @@ namespace ScoreHunter
 
             public Builder ExtendHeroPower(double duration)
             {
+                _activations[_activations.Count - 1].ExtendActivation(duration);
                 _heroPowerEnd += duration;
                 return this;
             }
@@ -286,11 +294,12 @@ namespace ScoreHunter
             return false;
         }
 
-        public bool TrySetHeroPower(IHeroPower heroPower, out ICandidate candidate)
+        public bool TrySetHeroPower(NoteEvent note, IHeroPower heroPower, out ICandidate candidate)
         {
+            Debug.Assert(note.IsHeroPowerStart);
             if (_heroPower != heroPower)
             {
-                candidate = ToBuilder().SetHeroPower(heroPower).Build();
+                candidate = ToBuilder().SetHeroPower(note, heroPower).Build();
                 return true;
             }
             candidate = this;

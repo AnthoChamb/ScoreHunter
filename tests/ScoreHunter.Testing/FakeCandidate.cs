@@ -39,7 +39,7 @@ namespace ScoreHunter.Testing
             return false;
         }
 
-        public bool TrySetHeroPower(IHeroPower heroPower, out ICandidate candidate)
+        public bool TrySetHeroPower(NoteEvent note, IHeroPower heroPower, out ICandidate candidate)
         {
             candidate = null;
             return false;
